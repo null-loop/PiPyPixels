@@ -11,7 +11,7 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [ ] Power
 * [ ] Zoom
 * [ ] Brightness
-* [ ] Local UI that mimics the LED Matrix + remote buttons
+* [ ] Local UI that mimics the LED Matrix + remote buttons ([DearPyGui](https://github.com/hoffstadt/DearPyGui))
 * [ ] Maze Solver
 * [ ] Screen navigation
 * [ ] Snakes
