@@ -25,6 +25,15 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [ ] Options menu for snake config
 * [ ] Options menu for GOL presets
 
+## Package List (To be confirmed as we go)
+
+* CairoSVG
+* PIL
+* PyGithub
+* mahotas
+* numpy
+* keyboard
+
 ## Future - making it useful for others...
 
 * [ ] Documentation on my setup
