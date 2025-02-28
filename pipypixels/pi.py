@@ -3,7 +3,7 @@ import time
 
 from PIL import Image
 
-from pipypixels.graphics.matrix import ScreenMatrixConfiguration, ScreenMatrix
+from graphics.matrix import ScreenMatrixConfiguration, ScreenMatrix
 
 config = ScreenMatrixConfiguration()
 matrix = ScreenMatrix(config)
