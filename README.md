@@ -2,7 +2,7 @@
 
 Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 
-* [ ] 4 x 4 matrix wrapper - [RGB LED Driver](https://github.com/hzeller/rpi-rgb-led-matrix/tree/master/bindings/c%23)
+* [ ] 4 x 4 matrix wrapper - [RGB LED Driver](https://github.com/hzeller/rpi-rgb-led-matrix)
 * [ ] Startup / test screen
 * [ ] Game engine / screen infra to run Game of Life
 * [ ] Screen controller + GameScreen
@@ -27,12 +27,12 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 
 ## Package List (To be confirmed as we go)
 
-* CairoSVG
 * PIL
 * PyGithub
 * mahotas
 * numpy
 * keyboard
+* Spotipy
 
 ## Future - making it useful for others...
 
@@ -45,3 +45,8 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [ ] Local setup script?
 * [ ] Script / CLI tool for capturing scan codes to config
 * [ ] Re-setup from scratch on a new diet-pi image - document the whole process, reset when it goes wrong and get the docs right!
+
+## Attribution
+
+* [RGB LED Driver](https://github.com/hzeller/rpi-rgb-led-matrix) - Obvs.
+* [Payungkead](https://www.flaticon.com/authors/payungkead) - LED Icon
