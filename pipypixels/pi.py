@@ -10,7 +10,7 @@ matrix = ScreenMatrix(config)
 
 try:
     print("Press CTRL-C to stop.")
-    matrix.render_image(Image.open("../assets/led.png"))
+    matrix.render_image(Image.open("assets/led.png"))
     while True:
         time.sleep(1)
 except KeyboardInterrupt:
