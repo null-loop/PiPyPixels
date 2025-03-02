@@ -4,7 +4,7 @@ from pipypixels.games.life import GameOfLifeEngine
 from pipypixels.graphics.config import ScreenMatrixConfiguration
 from pipypixels.graphics.fakematrix import FakeMatrix
 
-def pause_play(sender, app_data):
+def pause_play():
     life.toggle_pause()
 
 config = ScreenMatrixConfiguration()
