@@ -1,4 +1,5 @@
 from PIL import Image
+# pylint: disable=import-error
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 
 from pipypixels.graphics.config import ScreenMatrixConfiguration
