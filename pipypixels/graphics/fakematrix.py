@@ -1,15 +1,18 @@
 from PIL import Image
 from numpy import asarray
 
-from pipypixels.graphics.options import ScreenMatrixConfiguration
+from pipypixels.graphics.config import ScreenMatrixConfiguration
 import dearpygui.dearpygui as dpg
 
 class FakeMatrix:
     def __init__(self, config:ScreenMatrixConfiguration):
-        self.__config = config
+        self.config = config
         self.__led_size = 5
 
-        dpg.add_drawlist(width=config.overall_led_cols * self.__led_size, height=config.overall_led_rows * self.__led_size, label='LED_PANEL')
+        panel_width = config.overall_led_cols * self.__led_size
+        panel_height = config.overall_led_rows * self.__led_size
+
+        dpg.add_drawlist(width=panel_width, height=panel_height, tag='LED_PANEL')
 
     def start_new_canvas(self):
         pass
@@ -26,7 +29,7 @@ class FakeMatrix:
         p_min = (t_x,t_y)
         p_max = (t_x + self.__led_size, t_y + self.__led_size)
         color = (r,g,b)
-        dpg.draw_rectangle(p_min, p_max, color=color, thickness=0, fill=color, parent='LED_PANEL')
+        dpg.draw_rectangle(p_min, p_max, color=(0,0,0), thickness=0, fill=color, parent='LED_PANEL')
 
     def render_image(self, image: Image):
         data = asarray(image)
