@@ -25,7 +25,7 @@ with dpg.window(tag="Matrix"):
             life = GameOfLifeEngine(1, matrix, 24)
             life.random_spawn(5)
 
-dpg.create_viewport(title='PiPyPixels Local Debug Environment', width=900, height=657)
+dpg.create_viewport(title='PiPyPixels Local Debug Environment', width=900)
 
 dpg.setup_dearpygui()
 dpg.show_viewport()
