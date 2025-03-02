@@ -2,11 +2,12 @@ from PIL import Image
 # pylint: disable=import-error
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 
-from pipypixels.graphics.shared import ScreenMatrixConfiguration
+from pipypixels.graphics.shared import ScreenMatrixConfiguration, Matrix
 
-class ScreenMatrix:
+
+class ScreenMatrix(Matrix):
     def __init__(self, config:ScreenMatrixConfiguration):
-        self.config = config
+        super().__init__(config)
         self.__options = RGBMatrixOptions()
 
         # figure out how many panels in rows / cols

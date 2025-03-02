@@ -2,12 +2,12 @@ from PIL import Image
 from numpy import asarray
 import dearpygui.dearpygui as dpg
 
-from pipypixels.graphics.shared import ScreenMatrixConfiguration
+from pipypixels.graphics.shared import ScreenMatrixConfiguration, Matrix
 
 
-class FakeMatrix:
-    def __init__(self, config:ScreenMatrixConfiguration):
-        self.config = config
+class FakeMatrix(Matrix):
+    def __init__(self, config: ScreenMatrixConfiguration):
+        super().__init__(config)
         self.__led_size = 5
 
         panel_width = config.overall_led_cols * self.__led_size

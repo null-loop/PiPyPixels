@@ -1,3 +1,6 @@
+from PIL import Image
+
+
 class ScreenMatrixConfiguration:
     panel_led_rows = 64
     panel_led_cols = 64
@@ -9,3 +12,28 @@ class ScreenMatrixConfiguration:
     brightness = 50
     disable_hardware_pulsing = True
     drop_privileges = False
+
+class Matrix:
+    def __init__(self, config:ScreenMatrixConfiguration):
+        self.config = config
+
+    def start_new_canvas(self):
+        pass
+
+    def finish_canvas(self):
+        pass
+
+    def render_image(self, image: Image):
+        pass
+
+    def set_pixel(self, x, y, r, g, b):
+        pass
+
+    def clear(self):
+        pass
+
+    def increase_brightness(self):
+        pass
+
+    def decrease_brightness(self):
+        pass

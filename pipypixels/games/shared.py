@@ -6,6 +6,7 @@ from enum import Enum
 from random import randrange
 
 from pipypixels.controls import Command
+from pipypixels.graphics.shared import Matrix
 
 
 class GameEntity(Enum):
@@ -95,7 +96,7 @@ class GameBoard:
         return randrange(self.height())
 
 class GameEngine:
-    def __init__(self, scale, matrix, frame_rate):
+    def __init__(self, scale, matrix: Matrix, frame_rate):
         width = self._calculate_game_board_width(matrix.config.overall_led_cols, scale)
         height = self._calculate_game_board_height(matrix.config.overall_led_rows, scale)
         self._board = GameBoard(width, height, scale, matrix, self._colour_cell_func)
