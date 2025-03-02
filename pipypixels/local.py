@@ -1,20 +1,38 @@
 import dearpygui.dearpygui as dpg
-from PIL import Image
 
+from pipypixels.games.life import GameOfLifeEngine
+from pipypixels.graphics.config import ScreenMatrixConfiguration
 from pipypixels.graphics.fakematrix import FakeMatrix
-from pipypixels.graphics.options import ScreenMatrixConfiguration
+
+def pause_play(sender, app_data):
+    life.toggle_pause()
+
+config = ScreenMatrixConfiguration()
 
 dpg.create_context()
 
 with dpg.window(tag="Matrix"):
-    config = ScreenMatrixConfiguration()
-    matrix = FakeMatrix(config)
-    matrix.render_image(Image.open("../assets/led.png"))
+    with dpg.table(header_row=False):
+        dpg.add_table_column(width_fixed=True, width=800)
+        dpg.add_table_column()
 
-dpg.create_viewport(title='PiPyPixels Local Debug Environment', width=1000, height=1000)
+        with dpg.table_row():
+            matrix = FakeMatrix(config)
+            with dpg.table(header_row=False):
+                dpg.add_table_column()
+                with dpg.table_row():
+                    dpg.add_button(label='Pause/Play', callback=pause_play)
+            life = GameOfLifeEngine(1, matrix, 24)
+            life.random_spawn(5)
+
+dpg.create_viewport(title='PiPyPixels Local Debug Environment', width=900, height=657)
 
 dpg.setup_dearpygui()
 dpg.show_viewport()
 dpg.set_primary_window("Matrix", True)
-dpg.start_dearpygui()
-dpg.destroy_context()
+try:
+    life.begin()
+    dpg.start_dearpygui()
+finally:
+    life.end()
+    dpg.destroy_context()

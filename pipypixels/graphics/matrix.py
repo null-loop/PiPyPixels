@@ -2,11 +2,11 @@ from PIL import Image
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 import dearpygui.dearpygui as dpg
 
-from pipypixels.graphics.options import ScreenMatrixConfiguration
+from pipypixels.graphics.config import ScreenMatrixConfiguration
 
 class ScreenMatrix:
     def __init__(self, config:ScreenMatrixConfiguration):
-        self.__config = config
+        self.config = config
         self.__options = RGBMatrixOptions()
 
         # figure out how many panels in rows / cols
@@ -36,12 +36,12 @@ class ScreenMatrix:
     def render_image(self, image: Image):
         if self.__panel_rows > 1:
             # rearrange for rendering...
-            top_half = image.crop((0, 0, self.__config.overall_led_cols, self.__config.panel_led_rows))
-            bottom_half = image.crop((0, self.__config.panel_led_rows, self.__config.overall_led_cols, self.__config.overall_led_rows))
+            top_half = image.crop((0, 0, self.config.overall_led_cols, self.config.panel_led_rows))
+            bottom_half = image.crop((0, self.config.panel_led_rows, self.config.overall_led_cols, self.config.overall_led_rows))
 
-            stitched = Image.new('RGB', (self.__config.overall_led_cols * 2, self.__config.panel_led_rows))
+            stitched = Image.new('RGB', (self.config.overall_led_cols * 2, self.config.panel_led_rows))
             stitched.paste(top_half, (0, 0))
-            stitched.paste(bottom_half, (self.__config.overall_led_cols, 0))
+            stitched.paste(bottom_half, (self.config.overall_led_cols, 0))
 
             rgb = stitched.convert('RGB')
         else:
@@ -58,9 +58,9 @@ class ScreenMatrix:
         t_x = x
         t_y = y
         if self.__panel_rows > 1:
-            if t_y >= self.__config.panel_led_rows:
-                t_x = t_x + self.__config.overall_led_cols
-                t_y = t_y - self.__config.panel_led_rows
+            if t_y >= self.config.panel_led_rows:
+                t_x = t_x + self.config.overall_led_cols
+                t_y = t_y - self.config.panel_led_rows
         if self.__next_canvas is not None:
             self.__next_canvas.SetPixel(t_x, t_y, r, g, b)
         else:
