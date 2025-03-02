@@ -21,7 +21,7 @@ class GameOfLifeEngine(GameEngine):
         self._board.reset()
         total_cells = self._board.height() * self._board.width()
         population = math.floor(total_cells / fraction)
-        for p in range(population):
+        for _ in range(population):
             populated = False
             while not populated:
                 x = random.randint(0, self._board.width() - 1)
