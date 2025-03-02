@@ -1,4 +1,5 @@
 from PIL import Image
+# pylint: disable=import-error
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 
 from pipypixels.graphics.config import ScreenMatrixConfiguration
@@ -69,13 +70,7 @@ class ScreenMatrix:
         self.__matrix.Clear()
 
     def increase_brightness(self):
-        n = self.__matrix.brightness + 10
-        if n > 100:
-            n = 100
-        self.__matrix.brightness = n
+        self.__matrix.brightness = max(self.__matrix.brightness + 10, 100)
 
     def decrease_brightness(self):
-        n = self.__matrix.brightness - 10
-        if n <= 0:
-            n = 1
-        self.__matrix.brightness = n
+        self.__matrix.brightness = min(self.__matrix.brightness - 10, 1)

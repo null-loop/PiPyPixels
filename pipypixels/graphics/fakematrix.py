@@ -1,8 +1,9 @@
 from PIL import Image
 from numpy import asarray
+import dearpygui.dearpygui as dpg
 
 from pipypixels.graphics.config import ScreenMatrixConfiguration
-import dearpygui.dearpygui as dpg
+
 
 class FakeMatrix:
     def __init__(self, config:ScreenMatrixConfiguration):

@@ -5,8 +5,6 @@ import time
 from enum import Enum
 from random import randrange
 
-from PIL import ImageColor
-
 from pipypixels.controls import Command
 
 
@@ -26,7 +24,7 @@ class GameBoard:
         self.__scale = scale
         self.__matrix = matrix
         self.__cell_colour_func = cell_colour_func
-        for y in range(width):
+        for _ in range(width):
             self.__entities.append([GameEntity.EMPTY] * height)
 
     def get(self, x, y) -> GameEntity:
@@ -98,13 +96,19 @@ class GameBoard:
 
 class GameEngine:
     def __init__(self, scale, matrix, frame_rate):
-        width = int(math.floor(matrix.config.overall_led_cols / scale))
-        height = int(math.floor(matrix.config.overall_led_rows / scale))
+        width = self._calculate_game_board_width(matrix.config.overall_led_cols, scale)
+        height = self._calculate_game_board_height(matrix.config.overall_led_rows, scale)
         self._board = GameBoard(width, height, scale, matrix, self._colour_cell_func)
         self.__thread = None
         self.__command_queue = queue.Queue()
         self.__paused = False
         self.__frame_duration_ns = 1 / frame_rate * 1000000000
+
+    def _calculate_game_board_width(self, led_cols, scale):
+        return int(math.floor(led_cols / scale))
+
+    def _calculate_game_board_height(self, led_rows, scale):
+        return int(math.floor(led_rows / scale))
 
     def _colour_cell_func(self, x, y, entity_type:GameEntity):
         pass

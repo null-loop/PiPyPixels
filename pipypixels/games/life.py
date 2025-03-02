@@ -7,8 +7,6 @@ from pipypixels.games.shared import GameEntity, GameEngine
 
 
 class GameOfLifeEngine(GameEngine):
-    def __init__(self, scale, matrix, frame_rate):
-        super().__init__(scale, matrix, frame_rate)
 
     def _colour_cell_func(self, x, y, entity_type:GameEntity):
         colour = ImageColor.getrgb("Black")
@@ -23,7 +21,7 @@ class GameOfLifeEngine(GameEngine):
         self._board.reset()
         total_cells = self._board.height() * self._board.width()
         population = math.floor(total_cells / fraction)
-        for p in range(population):
+        for _ in range(population):
             populated = False
             while not populated:
                 x = random.randint(0, self._board.width() - 1)
