@@ -15,6 +15,8 @@ class FakeMatrix:
 
         dpg.add_drawlist(width=panel_width, height=panel_height, tag='LED_PANEL')
 
+        self.__create_pixels()
+
     def start_new_canvas(self):
         pass
 
@@ -25,12 +27,18 @@ class FakeMatrix:
         pass
 
     def set_pixel(self, x, y, r, g, b):
-        t_x = x * self.__led_size
-        t_y = y * self.__led_size
-        p_min = (t_x,t_y)
-        p_max = (t_x + self.__led_size, t_y + self.__led_size)
-        color = (r,g,b)
-        dpg.draw_rectangle(p_min, p_max, color=(0,0,0), thickness=0, fill=color, parent='LED_PANEL')
+        tag = 'pixel_' + str(x) + '_' + str(y)
+        dpg.configure_item(tag, fill=(r,g,b))
+
+    def __create_pixels(self):
+        for x in range(self.config.overall_led_cols):
+            for y in range(self.config.overall_led_rows):
+                t_x = x * self.__led_size
+                t_y = y * self.__led_size
+                p_min = (t_x, t_y)
+                p_max = (t_x + self.__led_size, t_y + self.__led_size)
+                tag = 'pixel_' + str(x) + '_' + str(y)
+                dpg.draw_rectangle(p_min, p_max, color=(0, 0, 0), thickness=0, fill=(0,0,0), parent='LED_PANEL', tag=tag)
 
     def render_image(self, image: Image):
         data = asarray(image)
