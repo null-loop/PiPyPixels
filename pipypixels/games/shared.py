@@ -5,8 +5,6 @@ import time
 from enum import Enum
 from random import randrange
 
-from PIL import ImageColor
-
 from pipypixels.controls import Command
 
 
