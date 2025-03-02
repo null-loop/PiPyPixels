@@ -1,6 +1,5 @@
 from PIL import Image
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
-import dearpygui.dearpygui as dpg
 
 from pipypixels.graphics.config import ScreenMatrixConfiguration
 
