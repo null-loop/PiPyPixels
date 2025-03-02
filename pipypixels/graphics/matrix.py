@@ -1,18 +1,8 @@
 from PIL import Image
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
+import dearpygui.dearpygui as dpg
 
-
-class ScreenMatrixConfiguration:
-    panel_led_rows = 64
-    panel_led_cols = 64
-    overall_led_rows = 128
-    overall_led_cols = 128
-    hardware_mapping = 'adafruit-hat'
-    gpio_slowdown = 2
-    limit_refresh_rate_hz = 120
-    brightness = 50
-    disable_hardware_pulsing = True
-    drop_privileges = False
+from pipypixels.graphics.options import ScreenMatrixConfiguration
 
 class ScreenMatrix:
     def __init__(self, config:ScreenMatrixConfiguration):
