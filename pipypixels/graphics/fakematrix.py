@@ -24,7 +24,7 @@ class FakeMatrix:
         t_x = x * self.__led_size
         t_y = y * self.__led_size
         p_min = (t_x,t_y)
-        p_max = (t_x + self.__led_size, t_y - self.__led_size)
+        p_max = (t_x + self.__led_size, t_y + self.__led_size)
         color = (r,g,b)
         dpg.draw_rectangle(p_min, p_max, color=color, thickness=0, fill=color, parent='LED_PANEL')
 
