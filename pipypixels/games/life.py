@@ -7,8 +7,6 @@ from pipypixels.games.shared import GameEntity, GameEngine
 
 
 class GameOfLifeEngine(GameEngine):
-    def __init__(self, scale, matrix, frame_rate):
-        super().__init__(scale, matrix, frame_rate)
 
     def _colour_cell_func(self, x, y, entity_type:GameEntity):
         colour = ImageColor.getrgb("Black")
