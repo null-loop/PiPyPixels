@@ -2,7 +2,7 @@ from PIL import Image
 # pylint: disable=import-error
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 
-from pipypixels.graphics.config import ScreenMatrixConfiguration
+from pipypixels.graphics.shared import ScreenMatrixConfiguration
 
 class ScreenMatrix:
     def __init__(self, config:ScreenMatrixConfiguration):

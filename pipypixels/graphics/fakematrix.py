@@ -2,7 +2,7 @@ from PIL import Image
 from numpy import asarray
 import dearpygui.dearpygui as dpg
 
-from pipypixels.graphics.config import ScreenMatrixConfiguration
+from pipypixels.graphics.shared import ScreenMatrixConfiguration
 
 
 class FakeMatrix:

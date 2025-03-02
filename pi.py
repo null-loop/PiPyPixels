@@ -1,8 +1,9 @@
 import sys
 import time
 
-from pipypixels.graphics.matrix import ScreenMatrixConfiguration, ScreenMatrix
+from pipypixels.graphics.matrix import ScreenMatrix
 from pipypixels.games.life import GameOfLifeEngine
+from pipypixels.graphics.shared import ScreenMatrixConfiguration
 
 config = ScreenMatrixConfiguration()
 matrix = ScreenMatrix(config)
