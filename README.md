@@ -13,7 +13,7 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [ ] Frame rate control
 * [x] Pause / Play
 * [x] Step Forward
-* [ ] Power
+* [x] Power
 * [ ] Zoom
 * [ ] Brightness
 * [ ] Maze Solver

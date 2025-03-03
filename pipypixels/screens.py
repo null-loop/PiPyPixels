@@ -70,6 +70,9 @@ class ImageScreen(Screen):
                 self.__render_current_image()
             time.sleep(1/10)
 
+    def redraw(self):
+        self.__render_current_image()
+
 class StartupImageScreen(ImageScreen):
     def __init__(self, matrix: Matrix):
         super().__init__(10000000, matrix)
@@ -98,6 +101,12 @@ class ScreenController:
             for screen in self.__screens:
                 screen.receive_command(command)
         elif command == Command.POWER: self.__toggle_power()
+        elif command == Command.BRIGHTNESS_UP:
+            if self.__matrix.increase_brightness():
+                self.__currentScreen.redraw()
+        elif command == Command.BRIGHTNESS_DOWN:
+            if self.__matrix.decrease_brightness():
+                self.__currentScreen.redraw()
         else: self.__currentScreen.receive_command(command)
 
     def __toggle_power(self):

@@ -71,7 +71,11 @@ class ScreenMatrix(Matrix):
         self.__matrix.Clear()
 
     def increase_brightness(self):
-        self.__matrix.brightness = max(self.__matrix.brightness + 10, 100)
+        old = self.__matrix.brightness
+        self.__matrix.brightness = min(self.__matrix.brightness + 10, 100)
+        return old != self.__matrix.brightness
 
     def decrease_brightness(self):
-        self.__matrix.brightness = min(self.__matrix.brightness - 10, 1)
+        old = self.__matrix.brightness
+        self.__matrix.brightness = max(self.__matrix.brightness - 10, 1)
+        return old != self.__matrix.brightness

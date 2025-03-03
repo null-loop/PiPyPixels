@@ -193,3 +193,6 @@ class GameScreen(Screen):
 
     def is_paused(self):
         return self._engine.is_paused()
+
+    def redraw(self):
+        self._engine.board.redraw()

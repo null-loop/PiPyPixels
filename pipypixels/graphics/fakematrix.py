@@ -58,7 +58,11 @@ class FakeMatrix(Matrix):
                 self.set_pixel(x, y, rgb[0], rgb[1], rgb[2])
 
     def increase_brightness(self):
-        self.__brightness = max(self.__brightness + 10, 100)
+        old = self.__brightness
+        self.__brightness = min(self.__brightness + 10, 100)
+        return old != self.__brightness
 
     def decrease_brightness(self):
-        self.__brightness = min(self.__brightness - 10, 1)
+        old = self.__brightness
+        self.__brightness = max(self.__brightness - 10, 1)
+        return old != self.__brightness
