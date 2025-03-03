@@ -3,9 +3,9 @@ import time
 
 from pipypixels.graphics.matrix import ScreenMatrix
 from pipypixels.games.life import GameOfLifeEngine
-from pipypixels.graphics.shared import ScreenMatrixConfiguration
+from pipypixels.graphics.shared import MatrixConfiguration
 
-config = ScreenMatrixConfiguration()
+config = MatrixConfiguration()
 matrix = ScreenMatrix(config)
 life = GameOfLifeEngine(2, matrix, 24)
 
