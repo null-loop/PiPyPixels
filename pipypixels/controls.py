@@ -16,6 +16,8 @@ class Command(IntEnum):
     PROGRAM_DOWN = 10
     ZOOM_IN = 11
     ZOOM_OUT = 12
+    PAUSE = 13
+    PLAY = 14
     PRESET_1 = 100
     PRESET_2 = 101
     PRESET_3 = 102
