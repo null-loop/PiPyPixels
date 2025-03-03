@@ -6,18 +6,18 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [x] Startup / test screen
 * [x] Local UI that mimics the LED Matrix + remote buttons ([DearPyGui](https://github.com/hoffstadt/DearPyGui))
 * [x] Game engine / screen infra to run Game of Life
-* [ ] Screen controller + GameScreen
-* [ ] Remote control basics
+* [x] Screen controller + GameScreen
+* [x] StartupScreen + ImageScreen
+* [x] Remote control basics
+* [ ] Screen navigation
 * [ ] Frame rate control
+* [ ] Pause / Play
+* [ ] Step Forward
 * [ ] Power
 * [ ] Zoom
 * [ ] Brightness
 * [ ] Maze Solver
-* [ ] Screen navigation
 * [ ] Snakes
-* [ ] Pause / Play
-* [ ] Step Forward
-* [ ] ImageScreen
 * [ ] Secret management approach
 * [ ] Spotify - Need a Spotify client
 * [ ] GitStatus - Need a Git client
@@ -31,8 +31,8 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [x] DearPyGui
 * [ ] PyGithub
 * [ ] mahotas
-* [ ] numpy
-* [ ] keyboard
+* [x] numpy
+* [x] keyboard
 * [ ] Spotipy
 
 ## Future - making it useful for others...
@@ -51,3 +51,7 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 
 * [RGB LED Driver](https://github.com/hzeller/rpi-rgb-led-matrix) - Obvs.
 * [Payungkead](https://www.flaticon.com/authors/payungkead) - LED Icon
+
+## Known Issues
+
+None - yet!

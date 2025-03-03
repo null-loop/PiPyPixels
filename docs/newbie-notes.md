@@ -4,7 +4,7 @@
 git clone https://github.com/null-loop/PiPyPixels.git PiPyPixels
 python3 -m venv PiPyPixels
 cd PiPyPixels
-bin/pip install -r requirements.txt
+bin/pip install -r pi-requirements.txt
 bin/python3 pi.py
 ```
 
