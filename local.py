@@ -2,6 +2,7 @@ import dearpygui.dearpygui as dpg
 
 from pipypixels.controls.shared import Command
 from pipypixels.games.life import GameOfLifeScreen
+from pipypixels.games.maze import MazeScreen
 from pipypixels.graphics.fakematrix import FakeMatrix
 from pipypixels.graphics.shared import MatrixConfiguration
 from pipypixels.screens import ScreenController, StartupImageScreen
@@ -20,6 +21,7 @@ with dpg.window(tag="Matrix"):
         with dpg.table_row():
             matrix = FakeMatrix(config)
             controller = ScreenController(matrix)
+            controller.add_screen(MazeScreen(matrix))
             controller.add_screen(GameOfLifeScreen(matrix))
             controller.add_screen(StartupImageScreen(matrix))
             command_source = UICommandSource(controller)

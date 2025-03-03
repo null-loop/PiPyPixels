@@ -4,6 +4,7 @@ import time
 from pipypixels.controls.shared import Command
 from pipypixels.controls.pi import RemoteKeyboardCommandSource
 from pipypixels.games.life import GameOfLifeScreen
+from pipypixels.games.maze import MazeScreen
 from pipypixels.graphics.matrix import ScreenMatrix
 from pipypixels.graphics.shared import MatrixConfiguration
 from pipypixels.screens import ScreenController, StartupImageScreen
@@ -11,6 +12,7 @@ from pipypixels.screens import ScreenController, StartupImageScreen
 config = MatrixConfiguration()
 matrix = ScreenMatrix(config)
 controller = ScreenController(matrix)
+controller.add_screen(MazeScreen(matrix))
 controller.add_screen(StartupImageScreen(matrix))
 controller.add_screen(GameOfLifeScreen(matrix))
 command_source = RemoteKeyboardCommandSource(controller)
