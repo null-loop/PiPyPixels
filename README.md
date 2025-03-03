@@ -33,7 +33,7 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [ ] PyGithub
 * [ ] mahotas
 * [x] numpy
-* [ ] keyboard
+* [x] keyboard
 * [ ] Spotipy
 
 ## Future - making it useful for others...

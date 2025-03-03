@@ -5,7 +5,7 @@ import time
 from enum import Enum
 from random import randrange
 
-from pipypixels.controls import Command
+from pipypixels.controls.shared import Command
 from pipypixels.graphics.shared import Matrix
 from pipypixels.screens import Screen
 

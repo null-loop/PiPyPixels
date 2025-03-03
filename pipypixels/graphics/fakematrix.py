@@ -9,6 +9,7 @@ class FakeMatrix(Matrix):
     def __init__(self, config: MatrixConfiguration):
         super().__init__(config)
         self.__led_size = 5
+        self.__brightness = config.brightness
 
         panel_width = config.overall_led_cols * self.__led_size
         panel_height = config.overall_led_rows * self.__led_size
@@ -30,14 +31,14 @@ class FakeMatrix(Matrix):
 
     def __ensure_pixels_created(self):
         if not self.__created_pixels:
-            self.__create_pixels()
+            self.create_pixels()
 
     def set_pixel(self, x, y, r, g, b):
         self.__ensure_pixels_created()
         tag = 'pixel_' + str(x) + '_' + str(y)
-        dpg.configure_item(tag, fill=(r,g,b))
+        dpg.configure_item(tag, fill=(r,g,b,int(255*self.__brightness/100)))
 
-    def __create_pixels(self):
+    def create_pixels(self):
         self.__created_pixels = True
         for x in range(self.config.overall_led_cols):
             for y in range(self.config.overall_led_rows):
@@ -55,3 +56,9 @@ class FakeMatrix(Matrix):
             for x in range(len(row)):
                 rgb = row[x]
                 self.set_pixel(x, y, rgb[0], rgb[1], rgb[2])
+
+    def increase_brightness(self):
+        self.__brightness = max(self.__brightness + 10, 100)
+
+    def decrease_brightness(self):
+        self.__brightness = min(self.__brightness - 10, 1)

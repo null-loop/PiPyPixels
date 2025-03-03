@@ -4,7 +4,7 @@ import time
 
 from PIL import Image
 
-from pipypixels.controls import Command
+from pipypixels.controls.shared import Command
 from pipypixels.graphics.shared import Matrix
 
 
@@ -83,6 +83,7 @@ class ScreenController:
         self.__screens.append(screen)
 
     def receive_command(self, command:Command):
+        print(f'ScreenController::receive_command({command})')
         self.__currentScreen.receive_command(command)
 
     def begin(self):

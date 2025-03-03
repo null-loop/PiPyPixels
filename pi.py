@@ -1,20 +1,25 @@
 import sys
 import time
 
+from pipypixels.controls.shared import Command
+from pipypixels.controls.sources import RemoteKeyboardCommandSource
+from pipypixels.games.life import GameOfLifeScreen
 from pipypixels.graphics.matrix import ScreenMatrix
-from pipypixels.games.life import GameOfLifeEngine
 from pipypixels.graphics.shared import MatrixConfiguration
+from pipypixels.screens import ScreenController, StartupImageScreen
 
 config = MatrixConfiguration()
 matrix = ScreenMatrix(config)
-life = GameOfLifeEngine(2, matrix, 24)
+controller = ScreenController()
+controller.add_screen(StartupImageScreen(matrix))
+controller.add_screen(GameOfLifeScreen(matrix))
+command_source = RemoteKeyboardCommandSource(controller)
 
 try:
     print("Press CTRL-C to stop.")
-    life.random_spawn(5)
-    life.begin()
+    controller.begin()
     while True:
         time.sleep(1)
 except KeyboardInterrupt:
-    life.end()
+    controller.receive_command(Command.EXIT)
     sys.exit(0)
