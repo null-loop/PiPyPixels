@@ -2,11 +2,11 @@ from PIL import Image
 from numpy import asarray
 import dearpygui.dearpygui as dpg
 
-from pipypixels.graphics.shared import ScreenMatrixConfiguration, Matrix
+from pipypixels.graphics.shared import MatrixConfiguration, Matrix
 
 
 class FakeMatrix(Matrix):
-    def __init__(self, config: ScreenMatrixConfiguration):
+    def __init__(self, config: MatrixConfiguration):
         super().__init__(config)
         self.__led_size = 5
 

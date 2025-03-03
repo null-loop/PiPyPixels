@@ -1,7 +1,7 @@
 from PIL import Image
 
 
-class ScreenMatrixConfiguration:
+class MatrixConfiguration:
     panel_led_rows = 64
     panel_led_cols = 64
     overall_led_rows = 128
@@ -14,7 +14,7 @@ class ScreenMatrixConfiguration:
     drop_privileges = False
 
 class Matrix:
-    def __init__(self, config:ScreenMatrixConfiguration):
+    def __init__(self, config:MatrixConfiguration):
         self.config = config
 
     def start_new_canvas(self):
