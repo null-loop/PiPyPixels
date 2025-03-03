@@ -88,6 +88,15 @@ class ScreenController:
     def add_screen(self, screen:Screen):
         self.__screens.append(screen)
 
+    def receive_command(self, command:Command):
+        print(f'ScreenController::receive_command({command})')
+        if command == Command.PREVIOUS: self.__previous_screen()
+        elif command == Command.NEXT: self.__next_screen()
+        elif command == Command.EXIT:
+            for screen in self.__screens:
+                screen.receive_command(command)
+        else: self.__currentScreen.receive_command(command)
+
     def __next_screen(self):
         n = self.__currentScreenIndex + 1
         if n == len(self.__screens):
@@ -99,12 +108,6 @@ class ScreenController:
         if n == -1:
             n = len(self.__screens) - 1
         self.__set_screen_by_index(n)
-
-    def receive_command(self, command:Command):
-        print(f'ScreenController::receive_command({command})')
-        if command == Command.PREVIOUS: self.__previous_screen()
-        elif command == Command.NEXT: self.__next_screen()
-        else: self.__currentScreen.receive_command(command)
 
     def __set_screen_by_index(self, index:int):
         self.__currentScreenIndex = index
