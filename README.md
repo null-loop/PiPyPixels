@@ -8,17 +8,16 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [x] Game engine / screen infra to run Game of Life
 * [x] Screen controller + GameScreen
 * [x] StartupScreen + ImageScreen
-* [ ] Remote control basics
+* [x] Remote control basics
+* [ ] Screen navigation
 * [ ] Frame rate control
+* [ ] Pause / Play
+* [ ] Step Forward
 * [ ] Power
 * [ ] Zoom
 * [ ] Brightness
 * [ ] Maze Solver
-* [ ] Screen navigation
 * [ ] Snakes
-* [ ] Pause / Play
-* [ ] Step Forward
-* [ ] ImageScreen
 * [ ] Secret management approach
 * [ ] Spotify - Need a Spotify client
 * [ ] GitStatus - Need a Git client
