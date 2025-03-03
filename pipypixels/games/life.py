@@ -50,6 +50,9 @@ class GameOfLifeEngine(GameEngine):
         for d in deaths:
             self.board.set(d[0], d[1], GameEntity.EMPTY)
 
+    def _reset(self):
+        self.random_spawn(5)
+
 class GameOfLifeScreen(GameScreen):
     def __init__(self, matrix: Matrix):
         super().__init__(matrix, self.__get_engine, redraw_on_show=False)

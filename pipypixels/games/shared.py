@@ -128,6 +128,9 @@ class GameEngine:
     def __update_frame_duration_from_rate(self):
         self.__frame_duration_ns = 1 / self.__frame_rate * 1000000000
 
+    def _reset(self):
+        pass
+
     def __game_loop(self):
         while True:
             frame_start = time.time_ns()
@@ -149,6 +152,8 @@ class GameEngine:
                 if command == Command.FRAMERATE_DOWN:
                     self.__frame_rate = max(self.__frame_rate - 1, 1)
                     self.__update_frame_duration_from_rate()
+                if command == Command.RESET:
+                    self._reset()
             if not self.__paused or self.__step_forward:
                 self.__step_forward = False
                 self._game_tick()
@@ -223,6 +228,13 @@ class GameScreen(Screen):
         elif command == Command.ZOOM_OUT:
             self._scale = max(self._scale - 1, 1)
             self.__rebuild_engine()
+        elif command == Command.RESET:
+            self._engine.pause()
+            while not self._engine.is_paused():
+                time.sleep(1 / 1000)
+            self._matrix.clear()
+            self._engine.receive_command(command)
+            self._engine.play()
         else:
             self._engine.receive_command(command)
 
