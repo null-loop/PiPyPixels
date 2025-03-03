@@ -5,7 +5,7 @@ from pipypixels.games.life import GameOfLifeScreen
 from pipypixels.graphics.fakematrix import FakeMatrix
 from pipypixels.graphics.shared import MatrixConfiguration
 from pipypixels.screens import ScreenController, StartupImageScreen
-from pipypixels.controls.sources import UICommandSource
+from pipypixels.controls.local import UICommandSource
 
 
 def pause_play():

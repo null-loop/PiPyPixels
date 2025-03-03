@@ -2,7 +2,7 @@ import sys
 import time
 
 from pipypixels.controls.shared import Command
-from pipypixels.controls.sources import RemoteKeyboardCommandSource
+from pipypixels.controls.pi import RemoteKeyboardCommandSource
 from pipypixels.games.life import GameOfLifeScreen
 from pipypixels.graphics.matrix import ScreenMatrix
 from pipypixels.graphics.shared import MatrixConfiguration
