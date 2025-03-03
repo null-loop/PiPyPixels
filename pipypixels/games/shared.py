@@ -111,7 +111,8 @@ class GameEngine:
         self.__command_queue = queue.Queue()
         self.__paused = False
         self.__step_forward = False
-        self.__frame_duration_ns = 1 / frame_rate * 1000000000
+        self.__frame_rate = frame_rate
+        self.__update_frame_duration_from_rate()
 
     def _calculate_game_board_width(self, led_cols, scale):
         return int(math.floor(led_cols / scale))
@@ -121,6 +122,9 @@ class GameEngine:
 
     def _colour_cell_func(self, x, y, entity_type:GameEntity):
         pass
+
+    def __update_frame_duration_from_rate(self):
+        self.__frame_duration_ns = 1 / self.__frame_rate * 1000000000
 
     def __game_loop(self):
         while True:
@@ -137,6 +141,12 @@ class GameEngine:
                     self.__paused = True
                 if command == Command.STEP_FORWARD:
                     self.__step_forward = True
+                if command == Command.FRAMERATE_UP:
+                    self.__frame_rate = self.__frame_rate + 1
+                    self.__update_frame_duration_from_rate()
+                if command == Command.FRAMERATE_DOWN:
+                    self.__frame_rate = max(self.__frame_rate - 1, 1)
+                    self.__update_frame_duration_from_rate()
             if not self.__paused or self.__step_forward:
                 self.__step_forward = False
                 self._game_tick()

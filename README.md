@@ -11,11 +11,11 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [x] Remote control basics
 * [x] Screen navigation
 * [ ] Frame rate control
+* [ ] Zoom
 * [x] Pause / Play
 * [x] Step Forward
 * [x] Power
-* [ ] Zoom
-* [ ] Brightness
+* [x] Brightness
 * [ ] Maze Solver
 * [ ] Snakes
 * [ ] Secret management approach
