@@ -198,6 +198,7 @@ class GameScreen(Screen):
         self._scale = 1
 
     def show(self):
+        self._matrix.clear()
         if self.__redraw_on_show:
             self._engine.board.redraw()
         self._engine.play()
@@ -211,6 +212,7 @@ class GameScreen(Screen):
             time.sleep(1/1000)
         self._engine.end()
         self._engine = self.__engine_func()
+        self._matrix.clear()
         self._engine.random_spawn(5)
         self._engine.play()
 
