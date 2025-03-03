@@ -6,7 +6,8 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [x] Startup / test screen
 * [x] Local UI that mimics the LED Matrix + remote buttons ([DearPyGui](https://github.com/hoffstadt/DearPyGui))
 * [x] Game engine / screen infra to run Game of Life
-* [ ] Screen controller + GameScreen
+* [x] Screen controller + GameScreen
+* [x] StartupScreen + ImageScreen
 * [ ] Remote control basics
 * [ ] Frame rate control
 * [ ] Power

@@ -4,7 +4,7 @@ from pipypixels.controls import Command
 from pipypixels.games.life import GameOfLifeScreen
 from pipypixels.graphics.fakematrix import FakeMatrix
 from pipypixels.graphics.shared import MatrixConfiguration
-from pipypixels.screens import ScreenController
+from pipypixels.screens import ScreenController, StartupImageScreen
 
 
 def pause_play():
@@ -27,6 +27,7 @@ with dpg.window(tag="Matrix"):
                     dpg.add_button(label='Pause/Play', callback=pause_play)
 
             controller = ScreenController()
+            controller.add_screen(StartupImageScreen(matrix))
             controller.add_screen(GameOfLifeScreen(matrix))
 
 dpg.create_viewport(title='PiPyPixels Local Debug Environment', width=900)
