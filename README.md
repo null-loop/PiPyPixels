@@ -10,8 +10,9 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [x] StartupScreen + ImageScreen
 * [x] Remote control basics
 * [x] Screen navigation
-* [ ] Frame rate control
-* [ ] Zoom
+* [x] Frame rate control
+* [x] Zoom
+* [ ] Reset
 * [x] Pause / Play
 * [x] Step Forward
 * [x] Power
