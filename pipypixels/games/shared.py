@@ -110,6 +110,7 @@ class GameEngine:
         self.__thread = None
         self.__command_queue = queue.Queue()
         self.__paused = False
+        self.__step_forward = False
         self.__frame_duration_ns = 1 / frame_rate * 1000000000
 
     def _calculate_game_board_width(self, led_cols, scale):
@@ -134,7 +135,10 @@ class GameEngine:
                     self.__paused = False
                 if command == Command.PAUSE:
                     self.__paused = True
-            if not self.__paused:
+                if command == Command.STEP_FORWARD:
+                    self.__step_forward = True
+            if not self.__paused or self.__step_forward:
+                self.__step_forward = False
                 self._game_tick()
                 frame_duration_ns = time.time_ns() - frame_start
                 time_left_ns = self.__frame_duration_ns - frame_duration_ns
