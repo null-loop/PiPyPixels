@@ -2,17 +2,17 @@
 
 Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 
-* [x] 4 x 4 matrix wrapper - [RGB LED Driver](https://github.com/hzeller/rpi-rgb-led-matrix)
+* [x] 2 x 2 matrix wrapper - [RGB LED Driver](https://github.com/hzeller/rpi-rgb-led-matrix) - configurable size! Must be regular
 * [x] Startup / test screen
 * [x] Local UI that mimics the LED Matrix + remote buttons ([DearPyGui](https://github.com/hoffstadt/DearPyGui))
 * [x] Game engine / screen infra to run Game of Life
 * [x] Screen controller + GameScreen
 * [x] StartupScreen + ImageScreen
 * [x] Remote control basics
-* [ ] Screen navigation
+* [x] Screen navigation
 * [ ] Frame rate control
-* [ ] Pause / Play
-* [ ] Step Forward
+* [x] Pause / Play
+* [x] Step Forward
 * [ ] Power
 * [ ] Zoom
 * [ ] Brightness

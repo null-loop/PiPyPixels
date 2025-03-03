@@ -19,7 +19,7 @@ with dpg.window(tag="Matrix"):
 
         with dpg.table_row():
             matrix = FakeMatrix(config)
-            controller = ScreenController()
+            controller = ScreenController(matrix)
             controller.add_screen(GameOfLifeScreen(matrix))
             controller.add_screen(StartupImageScreen(matrix))
             command_source = UICommandSource(controller)

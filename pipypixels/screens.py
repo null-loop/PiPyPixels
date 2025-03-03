@@ -79,11 +79,13 @@ class StartupImageScreen(ImageScreen):
         return self.__led_icon
 
 class ScreenController:
-    def __init__(self):
+    def __init__(self, matrix: Matrix):
         self.__screens = []
         self.__thread = None
         self.__currentScreen = None
         self.__currentScreenIndex = -1
+        self.__powered = True
+        self.__matrix = matrix
 
     def add_screen(self, screen:Screen):
         self.__screens.append(screen)
@@ -95,7 +97,19 @@ class ScreenController:
         elif command == Command.EXIT:
             for screen in self.__screens:
                 screen.receive_command(command)
+        elif command == Command.POWER: self.__toggle_power()
         else: self.__currentScreen.receive_command(command)
+
+    def __toggle_power(self):
+        if self.__powered:
+            self.__currentScreen.hide()
+            while not self.__currentScreen.is_paused():
+                time.sleep(1/1000)
+            self.__matrix.clear()
+            self.__powered = False
+        else:
+            self.__powered = True
+            self.__currentScreen.show()
 
     def __next_screen(self):
         n = self.__currentScreenIndex + 1
