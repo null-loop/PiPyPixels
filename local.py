@@ -7,10 +7,6 @@ from pipypixels.graphics.shared import MatrixConfiguration
 from pipypixels.screens import ScreenController, StartupImageScreen
 from pipypixels.controls.local import UICommandSource
 
-
-def pause_play():
-    controller.receive_command(Command.PAUSE_PLAY)
-
 config = MatrixConfiguration()
 config.brightness = 100
 
@@ -23,9 +19,9 @@ with dpg.window(tag="Matrix"):
 
         with dpg.table_row():
             matrix = FakeMatrix(config)
-            controller = ScreenController()
-            controller.add_screen(StartupImageScreen(matrix))
+            controller = ScreenController(matrix)
             controller.add_screen(GameOfLifeScreen(matrix))
+            controller.add_screen(StartupImageScreen(matrix))
             command_source = UICommandSource(controller)
             command_source.create_buttons()
 

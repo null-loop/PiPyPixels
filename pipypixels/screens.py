@@ -70,6 +70,9 @@ class ImageScreen(Screen):
                 self.__render_current_image()
             time.sleep(1/10)
 
+    def redraw(self):
+        self.__render_current_image()
+
 class StartupImageScreen(ImageScreen):
     def __init__(self, matrix: Matrix):
         super().__init__(10000000, matrix)
@@ -79,14 +82,43 @@ class StartupImageScreen(ImageScreen):
         return self.__led_icon
 
 class ScreenController:
-    def __init__(self):
+    def __init__(self, matrix: Matrix):
         self.__screens = []
         self.__thread = None
         self.__currentScreen = None
         self.__currentScreenIndex = -1
+        self.__powered = True
+        self.__matrix = matrix
 
     def add_screen(self, screen:Screen):
         self.__screens.append(screen)
+
+    def receive_command(self, command:Command):
+        print(f'ScreenController::receive_command({command})')
+        if command == Command.PREVIOUS: self.__previous_screen()
+        elif command == Command.NEXT: self.__next_screen()
+        elif command == Command.EXIT:
+            for screen in self.__screens:
+                screen.receive_command(command)
+        elif command == Command.POWER: self.__toggle_power()
+        elif command == Command.BRIGHTNESS_UP:
+            if self.__matrix.increase_brightness():
+                self.__currentScreen.redraw()
+        elif command == Command.BRIGHTNESS_DOWN:
+            if self.__matrix.decrease_brightness():
+                self.__currentScreen.redraw()
+        else: self.__currentScreen.receive_command(command)
+
+    def __toggle_power(self):
+        if self.__powered:
+            self.__currentScreen.hide()
+            while not self.__currentScreen.is_paused():
+                time.sleep(1/1000)
+            self.__matrix.clear()
+            self.__powered = False
+        else:
+            self.__powered = True
+            self.__currentScreen.show()
 
     def __next_screen(self):
         n = self.__currentScreenIndex + 1
@@ -99,12 +131,6 @@ class ScreenController:
         if n == -1:
             n = len(self.__screens) - 1
         self.__set_screen_by_index(n)
-
-    def receive_command(self, command:Command):
-        print(f'ScreenController::receive_command({command})')
-        if command == Command.PREVIOUS: self.__previous_screen()
-        elif command == Command.NEXT: self.__next_screen()
-        else: self.__currentScreen.receive_command(command)
 
     def __set_screen_by_index(self, index:int):
         self.__currentScreenIndex = index

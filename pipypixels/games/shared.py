@@ -34,13 +34,15 @@ class GameBoard:
             return GameEntity.EMPTY
         return self.__entities[x][y]
 
-    def set(self, x, y, entity_type: GameEntity):
+    def set(self, x, y, entity_type: GameEntity, set_matrix=True):
         colour = self.__cell_colour_func(x, y, entity_type)
 
-        self.set_with_colour(x, y, entity_type, colour)
+        self.set_with_colour(x, y, entity_type, colour, set_matrix)
 
-    def set_with_colour(self, x, y, entity_type: GameEntity, colour):
+    def set_with_colour(self, x, y, entity_type: GameEntity, colour, set_matrix=True):
         self.__entities[x][y] = entity_type
+        if not set_matrix:
+            return
         sx = x * self.__scale
         sy = y * self.__scale
         for rx in range(self.__scale):
@@ -76,13 +78,13 @@ class GameBoard:
             return 1
         return 0
 
-    def reset(self):
-        self.reset_to_type(GameEntity.EMPTY)
+    def reset(self, set_matrix=True):
+        self.reset_to_type(GameEntity.EMPTY, set_matrix)
 
-    def reset_to_type(self, entity_type: GameEntity):
+    def reset_to_type(self, entity_type: GameEntity, set_matrix=True):
         for x in range(self.__width):
             for y in range(self.__height):
-                self.set(x, y, entity_type)
+                self.set(x, y, entity_type, set_matrix)
 
     def redraw(self):
         for x in range(self.__width):
@@ -110,7 +112,9 @@ class GameEngine:
         self.__thread = None
         self.__command_queue = queue.Queue()
         self.__paused = False
-        self.__frame_duration_ns = 1 / frame_rate * 1000000000
+        self.__step_forward = False
+        self.__frame_rate = frame_rate
+        self.__update_frame_duration_from_rate()
 
     def _calculate_game_board_width(self, led_cols, scale):
         return int(math.floor(led_cols / scale))
@@ -119,6 +123,12 @@ class GameEngine:
         return int(math.floor(led_rows / scale))
 
     def _colour_cell_func(self, x, y, entity_type:GameEntity):
+        pass
+
+    def __update_frame_duration_from_rate(self):
+        self.__frame_duration_ns = 1 / self.__frame_rate * 1000000000
+
+    def _reset(self):
         pass
 
     def __game_loop(self):
@@ -134,7 +144,18 @@ class GameEngine:
                     self.__paused = False
                 if command == Command.PAUSE:
                     self.__paused = True
-            if not self.__paused:
+                if command == Command.STEP_FORWARD:
+                    self.__step_forward = True
+                if command == Command.FRAMERATE_UP:
+                    self.__frame_rate = self.__frame_rate + 1
+                    self.__update_frame_duration_from_rate()
+                if command == Command.FRAMERATE_DOWN:
+                    self.__frame_rate = max(self.__frame_rate - 1, 1)
+                    self.__update_frame_duration_from_rate()
+                if command == Command.RESET:
+                    self._reset()
+            if not self.__paused or self.__step_forward:
+                self.__step_forward = False
                 self._game_tick()
                 frame_duration_ns = time.time_ns() - frame_start
                 time_left_ns = self.__frame_duration_ns - frame_duration_ns
@@ -150,6 +171,7 @@ class GameEngine:
     def begin(self):
         self.__thread = threading.Thread(target=self.__game_loop)
         self.__thread.start()
+        print(f'GameEngine::begin')
 
     def end(self):
         self.receive_command(Command.EXIT)
@@ -172,11 +194,16 @@ class GameEngine:
         self.__command_queue.put(command)
 
 class GameScreen(Screen):
-    def __init__(self, engine:GameEngine, redraw_on_show=True):
-        self._engine = engine
+    _scale = 1
+    def __init__(self, matrix: Matrix, engine_func, redraw_on_show=True):
         self.__redraw_on_show = redraw_on_show
+        self._matrix = matrix
+        self._engine = engine_func()
+        self.__engine_func = engine_func
+        self._scale = 1
 
     def show(self):
+        self._matrix.clear()
         if self.__redraw_on_show:
             self._engine.board.redraw()
         self._engine.play()
@@ -184,8 +211,35 @@ class GameScreen(Screen):
     def hide(self):
         self._engine.pause()
 
+    def __rebuild_engine(self):
+        self._engine.pause()
+        while not self._engine.is_paused():
+            time.sleep(1/1000)
+        self._engine.end()
+        self._engine = self.__engine_func()
+        self._matrix.clear()
+        self._engine.random_spawn(5)
+        self._engine.play()
+
     def receive_command(self, command:Command):
-        self._engine.receive_command(command)
+        if command == Command.ZOOM_IN:
+            self._scale = min(self._scale + 1, 8)
+            self.__rebuild_engine()
+        elif command == Command.ZOOM_OUT:
+            self._scale = max(self._scale - 1, 1)
+            self.__rebuild_engine()
+        elif command == Command.RESET:
+            self._engine.pause()
+            while not self._engine.is_paused():
+                time.sleep(1 / 1000)
+            self._matrix.clear()
+            self._engine.receive_command(command)
+            self._engine.play()
+        else:
+            self._engine.receive_command(command)
 
     def is_paused(self):
         return self._engine.is_paused()
+
+    def redraw(self):
+        self._engine.board.redraw()
