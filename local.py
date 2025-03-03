@@ -1,13 +1,16 @@
 import dearpygui.dearpygui as dpg
 
-from pipypixels.games.life import GameOfLifeEngine
-from pipypixels.graphics.shared import ScreenMatrixConfiguration
+from pipypixels.controls import Command
+from pipypixels.games.life import GameOfLifeScreen
 from pipypixels.graphics.fakematrix import FakeMatrix
+from pipypixels.graphics.shared import MatrixConfiguration
+from pipypixels.screens import ScreenController
+
 
 def pause_play():
-    life.toggle_pause()
+    controller.receive_command(Command.PAUSE_PLAY)
 
-config = ScreenMatrixConfiguration()
+config = MatrixConfiguration()
 
 dpg.create_context()
 
@@ -22,8 +25,9 @@ with dpg.window(tag="Matrix"):
                 dpg.add_table_column()
                 with dpg.table_row():
                     dpg.add_button(label='Pause/Play', callback=pause_play)
-            life = GameOfLifeEngine(1, matrix, 24)
-            life.random_spawn(5)
+
+            controller = ScreenController()
+            controller.add_screen(GameOfLifeScreen(matrix))
 
 dpg.create_viewport(title='PiPyPixels Local Debug Environment', width=900)
 
@@ -31,8 +35,7 @@ dpg.setup_dearpygui()
 dpg.show_viewport()
 dpg.set_primary_window("Matrix", True)
 try:
-    life.begin()
+    controller.begin()
     dpg.start_dearpygui()
 finally:
-    life.end()
     dpg.destroy_context()

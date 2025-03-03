@@ -7,6 +7,7 @@ from random import randrange
 
 from pipypixels.controls import Command
 from pipypixels.graphics.shared import Matrix
+from pipypixels.screens import Screen
 
 
 class GameEntity(Enum):
@@ -83,6 +84,12 @@ class GameBoard:
             for y in range(self.__height):
                 self.set(x, y, entity_type)
 
+    def redraw(self):
+        for x in range(self.__width):
+            for y in range(self.__height):
+                e = self.get(x, y)
+                self.set(x, y, e)
+
     def width(self)->int:
         return self.__width
 
@@ -99,7 +106,7 @@ class GameEngine:
     def __init__(self, scale, matrix: Matrix, frame_rate):
         width = self._calculate_game_board_width(matrix.config.overall_led_cols, scale)
         height = self._calculate_game_board_height(matrix.config.overall_led_rows, scale)
-        self._board = GameBoard(width, height, scale, matrix, self._colour_cell_func)
+        self.board = GameBoard(width, height, scale, matrix, self._colour_cell_func)
         self.__thread = None
         self.__command_queue = queue.Queue()
         self.__paused = False
@@ -123,6 +130,10 @@ class GameEngine:
                     return
                 if command == Command.PAUSE_PLAY:
                     self.__paused = not self.__paused
+                if command == Command.PLAY:
+                    self.__paused = False
+                if command == Command.PAUSE:
+                    self.__paused = True
             if not self.__paused:
                 self._game_tick()
                 frame_duration_ns = time.time_ns() - frame_start
@@ -143,8 +154,32 @@ class GameEngine:
     def toggle_pause(self):
         self.receive_command(Command.PAUSE_PLAY)
 
+    def play(self):
+        if self.__thread is None:
+            self.begin()
+        self.receive_command(Command.PLAY)
+
+    def pause(self):
+        self.receive_command(Command.PAUSE)
+
     def _game_tick(self):
         pass
 
     def receive_command(self, command:Command):
         self.__command_queue.put(command)
+
+class GameScreen(Screen):
+    def __init__(self, engine:GameEngine, redraw_on_show=True):
+        self._engine = engine
+        self.__redraw_on_show = redraw_on_show
+
+    def show(self):
+        if self.__redraw_on_show:
+            self._engine.board.redraw()
+        self._engine.play()
+
+    def hide(self):
+        self._engine.pause()
+
+    def receive_command(self, command:Command):
+        self._engine.receive_command(command)
