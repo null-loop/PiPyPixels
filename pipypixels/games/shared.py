@@ -209,10 +209,10 @@ class GameScreen(Screen):
         self._engine.pause()
         while not self._engine.is_paused():
             time.sleep(1/1000)
-        self._matrix.clear()
         self._engine.end()
         self._engine = self.__engine_func()
-        self.show()
+        self._engine.random_spawn(5)
+        self._engine.play()
 
     def receive_command(self, command:Command):
         if command == Command.ZOOM_IN:

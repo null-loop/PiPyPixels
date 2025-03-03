@@ -19,7 +19,7 @@ class GameOfLifeEngine(GameEngine):
         return colour
 
     def random_spawn(self, fraction):
-        self.board.reset(set_matrix=False)
+        self.board.reset()
         total_cells = self.board.height() * self.board.width()
         population = math.floor(total_cells / fraction)
         for _ in range(population):
