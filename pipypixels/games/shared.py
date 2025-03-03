@@ -4,6 +4,7 @@ import threading
 import time
 from enum import Enum
 from random import randrange
+from typing import List
 
 from pipypixels.controls.shared import Command
 from pipypixels.graphics.shared import Matrix
@@ -78,6 +79,19 @@ class GameBoard:
             return 1
         return 0
 
+    def __add_if_entity_type(self,x,y,entity_type:GameEntity,target:List):
+        if self.get(x,y) == entity_type:target.append((x,y))
+
+    def get_immediate_neighbours(self, x, y, entity_type:GameEntity)->List:
+        neighbours = []
+        if x > 0:
+            self.__add_if_entity_type(x - 1, y,entity_type,neighbours)
+        self.__add_if_entity_type(x, y - 1,entity_type,neighbours)
+        self.__add_if_entity_type(x, y + 1,entity_type,neighbours)
+        if x < self.__width - 1:
+            self.__add_if_entity_type(x + 1, y,entity_type,neighbours)
+        return neighbours
+
     def reset(self, set_matrix=True):
         self.reset_to_type(GameEntity.EMPTY, set_matrix)
 
@@ -128,7 +142,7 @@ class GameEngine:
     def __update_frame_duration_from_rate(self):
         self.__frame_duration_ns = 1 / self.__frame_rate * 1000000000
 
-    def _reset(self):
+    def reset(self):
         pass
 
     def __game_loop(self):
@@ -153,7 +167,7 @@ class GameEngine:
                     self.__frame_rate = max(self.__frame_rate - 1, 1)
                     self.__update_frame_duration_from_rate()
                 if command == Command.RESET:
-                    self._reset()
+                    self.reset()
             if not self.__paused or self.__step_forward:
                 self.__step_forward = False
                 self._game_tick()
@@ -171,7 +185,6 @@ class GameEngine:
     def begin(self):
         self.__thread = threading.Thread(target=self.__game_loop)
         self.__thread.start()
-        print(f'GameEngine::begin')
 
     def end(self):
         self.receive_command(Command.EXIT)
@@ -218,7 +231,7 @@ class GameScreen(Screen):
         self._engine.end()
         self._engine = self.__engine_func()
         self._matrix.clear()
-        self._engine.random_spawn(5)
+        self._engine.reset()
         self._engine.play()
 
     def receive_command(self, command:Command):
