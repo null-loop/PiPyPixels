@@ -15,6 +15,8 @@ class Screen:
         pass
     def receive_command(self, command:Command):
         pass
+    def is_paused(self):
+        pass
 
 class ImageScreen(Screen):
     def __init__(self, refresh_interval_seconds, matrix: Matrix):
@@ -45,6 +47,9 @@ class ImageScreen(Screen):
 
     def _render_image(self)->Image:
         pass
+
+    def is_paused(self):
+        return self.__paused
 
     def __refresh_loop(self):
         while True:
@@ -78,14 +83,37 @@ class ScreenController:
         self.__screens = []
         self.__thread = None
         self.__currentScreen = None
+        self.__currentScreenIndex = -1
 
     def add_screen(self, screen:Screen):
         self.__screens.append(screen)
 
+    def __next_screen(self):
+        n = self.__currentScreenIndex + 1
+        if n == len(self.__screens):
+            n = 0
+        self.__set_screen_by_index(n)
+
+    def __previous_screen(self):
+        n = self.__currentScreenIndex - 1
+        if n == -1:
+            n = len(self.__screens) - 1
+        self.__set_screen_by_index(n)
+
     def receive_command(self, command:Command):
         print(f'ScreenController::receive_command({command})')
-        self.__currentScreen.receive_command(command)
+        if command == Command.PREVIOUS: self.__previous_screen()
+        elif command == Command.NEXT: self.__next_screen()
+        else: self.__currentScreen.receive_command(command)
+
+    def __set_screen_by_index(self, index:int):
+        self.__currentScreenIndex = index
+        if self.__currentScreen is not None:
+            self.__currentScreen.hide()
+            while not self.__currentScreen.is_paused():
+                time.sleep(1/1000)
+        self.__currentScreen = self.__screens[index]
+        self.__currentScreen.show()
 
     def begin(self):
-        self.__currentScreen = self.__screens[0]
-        self.__currentScreen.show()
+        self.__set_screen_by_index(0)

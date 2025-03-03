@@ -144,6 +144,9 @@ class GameEngine:
             else:
                 time.sleep(1/10)
 
+    def is_paused(self):
+        return self.__paused
+
     def begin(self):
         self.__thread = threading.Thread(target=self.__game_loop)
         self.__thread.start()
@@ -183,3 +186,6 @@ class GameScreen(Screen):
 
     def receive_command(self, command:Command):
         self._engine.receive_command(command)
+
+    def is_paused(self):
+        return self._engine.is_paused()

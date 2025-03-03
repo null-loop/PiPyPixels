@@ -12,7 +12,7 @@ def pause_play():
     controller.receive_command(Command.PAUSE_PLAY)
 
 config = MatrixConfiguration()
-config.brightness = 10
+config.brightness = 100
 
 dpg.create_context()
 
