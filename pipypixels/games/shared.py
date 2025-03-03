@@ -185,7 +185,6 @@ class GameEngine:
     def begin(self):
         self.__thread = threading.Thread(target=self.__game_loop)
         self.__thread.start()
-        print(f'GameEngine::begin')
 
     def end(self):
         self.receive_command(Command.EXIT)

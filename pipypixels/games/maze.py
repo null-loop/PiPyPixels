@@ -91,9 +91,9 @@ class MazeEngine(GameEngine):
         return h
 
     def _colour_cell_func(self, x, y, entity_type):
-        colour = [200,200,200]
+        colour = [0,0,0]
         if entity_type == GameEntity.WALL:
-            colour = [0,0,0]
+            colour = [80,80,80]
         if entity_type == GameEntity.SOLVER:
             colour = [0, 255, 0]
         return colour
@@ -150,7 +150,7 @@ class MazeEngine(GameEngine):
                 self.__state = GameState.PROGRESSING
             else:
                 trimmed = self.__trail.pop()
-                self.board.set_with_colour(trimmed[0], trimmed[1], GameEntity.EMPTY, [255, 0, 0])
+                self.board.set_with_colour(trimmed[0], trimmed[1], GameEntity.EMPTY, [0, 60, 0])
 
         # check when we've solved the maze - and start another one!
         if fin:
@@ -197,4 +197,4 @@ class MazeScreen(GameScreen):
         self._engine.play()
 
     def __get_engine(self) ->GameEngine:
-        return MazeEngine(self._scale, self._matrix, 24)
+        return MazeEngine(self._scale, self._matrix, 256)
