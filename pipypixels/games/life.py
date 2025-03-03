@@ -56,4 +56,4 @@ class GameOfLifeScreen(GameScreen):
 
     def show(self):
         self._engine.random_spawn(5)
-        #self._engine.play()
+        self._engine.play()

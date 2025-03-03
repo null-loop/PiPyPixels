@@ -14,23 +14,31 @@ class FakeMatrix(Matrix):
         panel_height = config.overall_led_rows * self.__led_size
 
         dpg.add_drawlist(width=panel_width, height=panel_height, tag='LED_PANEL')
-
-        self.__create_pixels()
+        self.__created_pixels = False
 
     def start_new_canvas(self):
-        pass
+        self.__ensure_pixels_created()
 
     def finish_canvas(self):
-        pass
+        self.__ensure_pixels_created()
 
     def clear(self):
-        pass
+        self.__ensure_pixels_created()
+        for x in range(self.config.overall_led_cols):
+            for y in range(self.config.overall_led_rows):
+                self.set_pixel(x,y,0,0,0)
+
+    def __ensure_pixels_created(self):
+        if not self.__created_pixels:
+            self.__create_pixels()
 
     def set_pixel(self, x, y, r, g, b):
+        self.__ensure_pixels_created()
         tag = 'pixel_' + str(x) + '_' + str(y)
         dpg.configure_item(tag, fill=(r,g,b))
 
     def __create_pixels(self):
+        self.__created_pixels = True
         for x in range(self.config.overall_led_cols):
             for y in range(self.config.overall_led_rows):
                 t_x = x * self.__led_size

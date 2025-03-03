@@ -21,8 +21,8 @@ class GameEntity(Enum):
 class GameBoard:
     def __init__(self, width, height, scale, matrix, cell_colour_func):
         self.__entities = []
-        self.__height = width
-        self.__width = height
+        self.__height = height
+        self.__width = width
         self.__scale = scale
         self.__matrix = matrix
         self.__cell_colour_func = cell_colour_func

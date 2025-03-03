@@ -38,4 +38,5 @@ try:
     controller.begin()
     dpg.start_dearpygui()
 finally:
+    controller.receive_command(Command.EXIT)
     dpg.destroy_context()

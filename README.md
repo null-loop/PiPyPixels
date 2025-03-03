@@ -31,7 +31,7 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [x] DearPyGui
 * [ ] PyGithub
 * [ ] mahotas
-* [ ] numpy
+* [x] numpy
 * [ ] keyboard
 * [ ] Spotipy
 
@@ -51,3 +51,7 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 
 * [RGB LED Driver](https://github.com/hzeller/rpi-rgb-led-matrix) - Obvs.
 * [Payungkead](https://www.flaticon.com/authors/payungkead) - LED Icon
+
+## Known Issues
+
+None - yet!
