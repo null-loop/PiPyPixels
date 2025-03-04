@@ -99,7 +99,7 @@ class MazeEngine(GameEngine):
         return colour
 
     def reset(self):
-        self.generate_maze()
+        self.__generate_maze()
 
     def _game_tick(self):
         fin = False
@@ -156,9 +156,9 @@ class MazeEngine(GameEngine):
         if fin:
             self.board.set(self.__maze_exit[0], self.__maze_exit[1], GameEntity.SOLVER)
             time.sleep(10)
-            self.generate_maze()
+            self.__generate_maze()
 
-    def generate_maze(self):
+    def __generate_maze(self):
         # reset the board to all walls
         self.board.reset_to_type(GameEntity.WALL)
         # reset game state
@@ -190,11 +190,6 @@ class MazeEngine(GameEngine):
 class MazeScreen(GameScreen):
     def __init__(self, matrix: Matrix):
         super().__init__(matrix, self.__get_engine, redraw_on_show=False)
-
-    def show(self):
-        self._matrix.clear()
-        self._engine.generate_maze()
-        self._engine.play()
 
     def __get_engine(self) ->GameEngine:
         return MazeEngine(self._scale, self._matrix, 256)

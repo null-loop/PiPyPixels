@@ -167,6 +167,7 @@ class GameEngine:
                     self.__frame_rate = max(self.__frame_rate - 1, 1)
                     self.__update_frame_duration_from_rate()
                 if command == Command.RESET:
+                    print('RESET')
                     self.reset()
             if not self.__paused or self.__step_forward:
                 self.__step_forward = False
@@ -194,7 +195,10 @@ class GameEngine:
 
     def play(self):
         if self.__thread is None:
+            self.receive_command(Command.RESET)
             self.begin()
+        elif self.reset_on_play():
+            self.receive_command(Command.RESET)
         self.receive_command(Command.PLAY)
 
     def pause(self):
@@ -205,6 +209,9 @@ class GameEngine:
 
     def receive_command(self, command:Command):
         self.__command_queue.put(command)
+
+    def reset_on_play(self):
+        return True
 
 class GameScreen(Screen):
     _scale = 1
