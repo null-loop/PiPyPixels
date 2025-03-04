@@ -177,7 +177,7 @@ class MazeEngine(GameEngine):
             if self.board.get(1, pos_y) == GameEntity.EMPTY:
                 found_entrance = True
                 self.__maze_entrance = (0, pos_y)
-                self.board.set_with_colour(0, pos_y, GameEntity.EMPTY,(255,255,255))
+                self.board.set(0, pos_y, GameEntity.EMPTY)
 
         found_exit = False
         while not found_exit:
@@ -185,7 +185,7 @@ class MazeEngine(GameEngine):
             if self.board.get(self.board.width() - 2, pos_y) == GameEntity.EMPTY:
                 found_exit = True
                 self.__maze_exit = (self.board.width() - 1, pos_y)
-                self.board.set_with_colour(self.board.width() - 1, pos_y, GameEntity.EMPTY, (255,255,255))
+                self.board.set(self.board.width() - 1, pos_y, GameEntity.EMPTY)
 
 class MazeScreen(GameScreen):
     def __init__(self, matrix: Matrix):

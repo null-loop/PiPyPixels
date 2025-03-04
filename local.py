@@ -4,32 +4,39 @@ from pipypixels.controls.shared import Command
 from pipypixels.games.life import GameOfLifeScreen
 from pipypixels.games.maze import MazeScreen
 from pipypixels.games.snakes import SnakeScreen
-from pipypixels.graphics.fakematrix import FakeMatrix
+from pipypixels.graphics.local import FakeMatrix
 from pipypixels.graphics.shared import MatrixConfiguration
 from pipypixels.screens import ScreenController, StartupImageScreen
 from pipypixels.controls.local import UICommandSource
 
+def __exit_app():
+    dpg.stop_dearpygui()
+
 config = MatrixConfiguration()
 config.brightness = 100
+matrix = FakeMatrix(config)
+controller = ScreenController(matrix)
+controller.add_screen(SnakeScreen(matrix))
+controller.add_screen(MazeScreen(matrix))
+controller.add_screen(GameOfLifeScreen(matrix))
+controller.add_screen(StartupImageScreen(matrix))
+command_source = UICommandSource(controller)
 
 dpg.create_context()
 
 with dpg.window(tag="Matrix"):
+    with dpg.menu_bar():
+        with dpg.menu(label="File"):
+            dpg.add_menu_item(label="Exit", callback=__exit_app)
     with dpg.table(header_row=False):
-        dpg.add_table_column(width_fixed=True, width=800)
+        dpg.add_table_column(width=matrix.panel_width, width_fixed=True)
         dpg.add_table_column()
 
         with dpg.table_row():
-            matrix = FakeMatrix(config)
-            controller = ScreenController(matrix)
-            controller.add_screen(SnakeScreen(matrix))
-            controller.add_screen(MazeScreen(matrix))
-            controller.add_screen(GameOfLifeScreen(matrix))
-            controller.add_screen(StartupImageScreen(matrix))
-            command_source = UICommandSource(controller)
+            matrix.create_led_panel()
             command_source.create_buttons()
 
-dpg.create_viewport(title='PiPyPixels Local Debug Environment', width=900)
+dpg.create_viewport(title='PiPyPixels Local Debug Environment', width=matrix.panel_width + 250)
 
 dpg.setup_dearpygui()
 dpg.show_viewport()

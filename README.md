@@ -12,19 +12,24 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [x] Screen navigation
 * [x] Frame rate control
 * [x] Zoom
-* [ ] Reset
+* [x] Reset
 * [x] Pause / Play
 * [x] Step Forward
 * [x] Power
 * [x] Brightness
-* [ ] Maze Solver
-* [ ] Snakes
+* [x] Maze Solver
+* [x] Snakes
+* [ ] pause_and_wait() methods
+* [ ] Ensure we're using commands everywhere we can - review use of the above method!
+* [ ] Write game startups to fresh canvas (Snake / Maze / Life) - won't affect local
+* [ ] Dynamic StartupScreen
+* [ ] StartupScreen needs to remove itself from the screens when navigated away from / after a time period
+* [ ] Options types
+* [ ] Reading config from JSON
 * [ ] Secret management approach
 * [ ] Spotify - Need a Spotify client
 * [ ] GitStatus - Need a Git client
-* [ ] Options menu system
-* [ ] Options menu for snake config
-* [ ] Options menu for GOL presets
+* [ ] Options 'screens' or Webserver?
 
 ## Package List (To be confirmed as we go)
 

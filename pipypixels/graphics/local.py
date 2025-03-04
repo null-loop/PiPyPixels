@@ -11,10 +11,9 @@ class FakeMatrix(Matrix):
         self.__led_size = 5
         self.__brightness = config.brightness
 
-        panel_width = config.overall_led_cols * self.__led_size
-        panel_height = config.overall_led_rows * self.__led_size
+        self.panel_width = config.overall_led_cols * self.__led_size
+        self.panel_height = config.overall_led_rows * self.__led_size
 
-        dpg.add_drawlist(width=panel_width, height=panel_height, tag='LED_PANEL')
         self.__created_pixels = False
 
     def start_new_canvas(self):
@@ -66,3 +65,6 @@ class FakeMatrix(Matrix):
         old = self.__brightness
         self.__brightness = max(self.__brightness - 10, 1)
         return old != self.__brightness
+
+    def create_led_panel(self):
+        dpg.add_drawlist(width=self.panel_width, height=self.panel_height, tag='LED_PANEL')

@@ -167,7 +167,6 @@ class GameEngine:
                     self.__frame_rate = max(self.__frame_rate - 1, 1)
                     self.__update_frame_duration_from_rate()
                 if command == Command.RESET:
-                    print('RESET')
                     self.reset()
             if not self.__paused or self.__step_forward:
                 self.__step_forward = False
@@ -236,9 +235,8 @@ class GameScreen(Screen):
         while not self._engine.is_paused():
             time.sleep(1/1000)
         self._engine.end()
-        self._engine = self.__engine_func()
         self._matrix.clear()
-        self._engine.reset()
+        self._engine = self.__engine_func()
         self._engine.play()
 
     def receive_command(self, command:Command):
@@ -248,13 +246,6 @@ class GameScreen(Screen):
         elif command == Command.ZOOM_OUT:
             self._scale = max(self._scale - 1, 1)
             self.__rebuild_engine()
-        elif command == Command.RESET:
-            self._engine.pause()
-            while not self._engine.is_paused():
-                time.sleep(1 / 1000)
-            self._matrix.clear()
-            self._engine.receive_command(command)
-            self._engine.play()
         else:
             self._engine.receive_command(command)
 
