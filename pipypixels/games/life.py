@@ -22,15 +22,9 @@ class GameOfLifeEngine(GameEngine):
         self.board.reset(set_matrix=False)
         total_cells = self.board.height() * self.board.width()
         population = math.floor(total_cells / fraction)
-        positions = []
         for _ in range(population):
-            positions.append(self.board.get_random_empty_position())
-        for x in range(self.board.width()):
-            for y in range(self.board.height()):
-                if (x,y) in positions:
-                    self.board.set(x, y, GameEntity.CELL)
-                else:
-                    self.board.set(x, y, GameEntity.EMPTY)
+            pos = self.board.get_random_empty_position()
+            self.board.set(pos[0],pos[1],GameEntity.CELL)
 
     def _game_tick(self):
         births=[]
