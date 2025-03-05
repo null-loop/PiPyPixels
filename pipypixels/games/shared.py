@@ -25,7 +25,7 @@ class GameBoard:
         self.__height = height
         self.__width = width
         self.__scale = scale
-        self.__matrix = matrix
+        self.matrix = matrix
         self.__cell_colour_func = cell_colour_func
         for _ in range(width):
             self.__entities.append([GameEntity.EMPTY] * height)
@@ -48,7 +48,7 @@ class GameBoard:
         sy = y * self.__scale
         for rx in range(self.__scale):
             for ry in range(self.__scale):
-                self.__matrix.set_pixel(rx + sx, ry + sy, colour[0], colour[1], colour[2])
+                self.matrix.set_pixel(rx + sx, ry + sy, colour[0], colour[1], colour[2])
 
     def get_random_empty_position(self):
         # Randomise x,y until you find an empty location
@@ -182,6 +182,16 @@ class GameEngine:
     def is_paused(self):
         return self.__paused
 
+    def wait_for_paused(self):
+        self.wait_for_paused_state(True)
+
+    def wait_for_playing(self):
+        self.wait_for_paused_state(False)
+
+    def wait_for_paused_state(self, is_paused:bool):
+        while self.is_paused() != is_paused:
+            time.sleep(1/1000)
+
     def begin(self):
         self.__thread = threading.Thread(target=self.__game_loop)
         self.__thread.start()
@@ -189,12 +199,12 @@ class GameEngine:
     def end(self):
         self.receive_command(Command.EXIT)
 
-    def toggle_pause(self):
-        self.receive_command(Command.PAUSE_PLAY)
-
     def play(self):
         if self.__thread is None:
+            self.receive_command(Command.RESET)
             self.begin()
+        elif self.reset_on_play():
+            self.receive_command(Command.RESET)
         self.receive_command(Command.PLAY)
 
     def pause(self):
@@ -205,6 +215,9 @@ class GameEngine:
 
     def receive_command(self, command:Command):
         self.__command_queue.put(command)
+
+    def reset_on_play(self):
+        return True
 
 class GameScreen(Screen):
     _scale = 1
@@ -218,7 +231,7 @@ class GameScreen(Screen):
     def show(self):
         self._matrix.clear()
         if self.__redraw_on_show:
-            self._engine.board.redraw()
+            self.redraw()
         self._engine.play()
 
     def hide(self):
@@ -226,12 +239,10 @@ class GameScreen(Screen):
 
     def __rebuild_engine(self):
         self._engine.pause()
-        while not self._engine.is_paused():
-            time.sleep(1/1000)
+        self._engine.wait_for_paused()
         self._engine.end()
-        self._engine = self.__engine_func()
         self._matrix.clear()
-        self._engine.reset()
+        self._engine = self.__engine_func()
         self._engine.play()
 
     def receive_command(self, command:Command):
@@ -241,13 +252,6 @@ class GameScreen(Screen):
         elif command == Command.ZOOM_OUT:
             self._scale = max(self._scale - 1, 1)
             self.__rebuild_engine()
-        elif command == Command.RESET:
-            self._engine.pause()
-            while not self._engine.is_paused():
-                time.sleep(1 / 1000)
-            self._matrix.clear()
-            self._engine.receive_command(command)
-            self._engine.play()
         else:
             self._engine.receive_command(command)
 
@@ -255,4 +259,6 @@ class GameScreen(Screen):
         return self._engine.is_paused()
 
     def redraw(self):
+        self._engine.board.matrix.start_new_canvas()
         self._engine.board.redraw()
+        self._engine.board.matrix.finish_canvas()

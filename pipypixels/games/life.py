@@ -18,19 +18,13 @@ class GameOfLifeEngine(GameEngine):
             colour = [r, g, b]
         return colour
 
-    def random_spawn(self, fraction):
+    def __random_spawn(self, fraction):
         self.board.reset(set_matrix=False)
         total_cells = self.board.height() * self.board.width()
         population = math.floor(total_cells / fraction)
         for _ in range(population):
-            populated = False
-            while not populated:
-                x = random.randint(0, self.board.width() - 1)
-                y = random.randint(0, self.board.height() - 1)
-                e = self.board.get(x, y)
-                if e == GameEntity.EMPTY:
-                    self.board.set(x, y, GameEntity.CELL)
-                    populated = True
+            pos = self.board.get_random_empty_position()
+            self.board.set(pos[0],pos[1],GameEntity.CELL)
 
     def _game_tick(self):
         births=[]
@@ -51,16 +45,11 @@ class GameOfLifeEngine(GameEngine):
             self.board.set(d[0], d[1], GameEntity.EMPTY)
 
     def reset(self):
-        self.random_spawn(5)
+        self.__random_spawn(5)
 
 class GameOfLifeScreen(GameScreen):
     def __init__(self, matrix: Matrix):
         super().__init__(matrix, self.__get_engine, redraw_on_show=False)
-
-    def show(self):
-        self._matrix.clear()
-        self._engine.random_spawn(5)
-        self._engine.play()
 
     def __get_engine(self) ->GameEngine:
         return GameOfLifeEngine(self._scale, self._matrix, 24)

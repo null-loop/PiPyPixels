@@ -72,12 +72,12 @@ class MazeGenerator:
 class MazeEngine(GameEngine):
     def __init__(self, scale, matrix: Matrix, frame_rate):
         super().__init__(scale, matrix, frame_rate)
-        self.__solver_step = 1/1000
         self.__maze_entrance = ()
         self.__maze_exit = ()
         self.__trail = []
         self.__junctions = []
         self.__state = GameState.NOT_STARTED
+        self.__wait_until = -1
         self.__returning_to = None
 
     def _calculate_game_board_width(self, led_cols, scale):
@@ -99,66 +99,70 @@ class MazeEngine(GameEngine):
         return colour
 
     def reset(self):
-        self.generate_maze()
+        self.__wait_until = -1
+        self.__generate_maze()
 
     def _game_tick(self):
-        fin = False
-        if self.__state == GameState.NOT_STARTED:
-            self.__trail.append(self.__maze_entrance)
-            self.board.set(self.__maze_entrance[0], self.__maze_entrance[1], GameEntity.SOLVER)
-            self.__state = GameState.PROGRESSING
-        elif self.__state == GameState.PROGRESSING:
-            current = self.__trail[-1]
-            can_move = self.board.get_immediate_neighbours(current[0], current[1], GameEntity.EMPTY)
-            # if we've returned to a previous junction - remove the turns we've already taken from the possible moves
-            if self.__returning_to is not None:
-                for already_turned in self.__returning_to.turns:
-                    can_move.remove(already_turned)
-            # 'tis a dead end my lord!
-            if len(can_move) == 0:
-                # if we're already returning to a junction, then pop that junction as it's exhausted
-                if self.__returning_to is not None:
-                    self.__junctions.pop()
-                # we're now returning to the next junction in our back track
-                self.__state = GameState.RETURNING
-                if len(self.__junctions) == 0:
-                    fin = True
-                else:
-                    self.__returning_to = self.__junctions[-1]
-            else:
-                if self.__maze_exit in can_move:
-                    fin = True
-                else:
-                    next_move = can_move[0]
-                    if self.__returning_to is not None:
-                        # now record the next turn we're making
-                        self.__returning_to.turns.append(next_move)
-                        self.__returning_to = None
-                    else:
-                        # if this is a junction we need to add that to our list
-                        if len(can_move) > 1:
-                            junction = Junction()
-                            junction.x = current[0]
-                            junction.y = current[1]
-                            junction.turns = [next_move]
-                            self.__junctions.append(junction)
-                    self.__trail.append(next_move)
-                    self.board.set(next_move[0], next_move[1], GameEntity.SOLVER)
-        elif self.__state == GameState.RETURNING:
-            current = self.__trail[-1]
-            if current[0] == self.__returning_to.x and current[1] == self.__returning_to.y:
+        if self.__wait_until > 0:
+            if time.time() > self.__wait_until:
+                self.reset()
+        else:
+            fin = False
+            if self.__state == GameState.NOT_STARTED:
+                self.__trail.append(self.__maze_entrance)
+                self.board.set(self.__maze_entrance[0], self.__maze_entrance[1], GameEntity.SOLVER)
                 self.__state = GameState.PROGRESSING
-            else:
-                trimmed = self.__trail.pop()
-                self.board.set_with_colour(trimmed[0], trimmed[1], GameEntity.EMPTY, [0, 60, 0])
+            elif self.__state == GameState.PROGRESSING:
+                current = self.__trail[-1]
+                can_move = self.board.get_immediate_neighbours(current[0], current[1], GameEntity.EMPTY)
+                # if we've returned to a previous junction - remove the turns we've already taken from the possible moves
+                if self.__returning_to is not None:
+                    for already_turned in self.__returning_to.turns:
+                        can_move.remove(already_turned)
+                # 'tis a dead end my lord!
+                if len(can_move) == 0:
+                    # if we're already returning to a junction, then pop that junction as it's exhausted
+                    if self.__returning_to is not None:
+                        self.__junctions.pop()
+                    # we're now returning to the next junction in our back track
+                    self.__state = GameState.RETURNING
+                    if len(self.__junctions) == 0:
+                        fin = True # this should never happen!
+                    else:
+                        self.__returning_to = self.__junctions[-1]
+                else:
+                    if self.__maze_exit in can_move:
+                        fin = True
+                    else:
+                        next_move = can_move[0]
+                        if self.__returning_to is not None:
+                            # now record the next turn we're making
+                            self.__returning_to.turns.append(next_move)
+                            self.__returning_to = None
+                        else:
+                            # if this is a junction we need to add that to our list
+                            if len(can_move) > 1:
+                                junction = Junction()
+                                junction.x = current[0]
+                                junction.y = current[1]
+                                junction.turns = [next_move]
+                                self.__junctions.append(junction)
+                        self.__trail.append(next_move)
+                        self.board.set(next_move[0], next_move[1], GameEntity.SOLVER)
+            elif self.__state == GameState.RETURNING:
+                current = self.__trail[-1]
+                if current[0] == self.__returning_to.x and current[1] == self.__returning_to.y:
+                    self.__state = GameState.PROGRESSING
+                else:
+                    trimmed = self.__trail.pop()
+                    self.board.set_with_colour(trimmed[0], trimmed[1], GameEntity.EMPTY, [0, 60, 0])
 
-        # check when we've solved the maze - and start another one!
-        if fin:
-            self.board.set(self.__maze_exit[0], self.__maze_exit[1], GameEntity.SOLVER)
-            time.sleep(10)
-            self.generate_maze()
+            # check when we've solved the maze - and start another one!
+            if fin:
+                self.board.set(self.__maze_exit[0], self.__maze_exit[1], GameEntity.SOLVER)
+                self.__wait_until = time.time() + 10 # display the solution for 10s before resetting
 
-    def generate_maze(self):
+    def __generate_maze(self):
         # reset the board to all walls
         self.board.reset_to_type(GameEntity.WALL)
         # reset game state
@@ -169,7 +173,6 @@ class MazeEngine(GameEngine):
         # The generator runs in here - write to the board as it goes
         generator = MazeGenerator(self.board)
         generator.generate()
-        # Carves out the maze. Consider a slowdown
         # Then pick an entrance and an exit - carve from board - set __maze_entrance and __maze_exit
         found_entrance = False
         while not found_entrance:
@@ -177,7 +180,7 @@ class MazeEngine(GameEngine):
             if self.board.get(1, pos_y) == GameEntity.EMPTY:
                 found_entrance = True
                 self.__maze_entrance = (0, pos_y)
-                self.board.set_with_colour(0, pos_y, GameEntity.EMPTY,(255,255,255))
+                self.board.set(0, pos_y, GameEntity.EMPTY)
 
         found_exit = False
         while not found_exit:
@@ -185,16 +188,11 @@ class MazeEngine(GameEngine):
             if self.board.get(self.board.width() - 2, pos_y) == GameEntity.EMPTY:
                 found_exit = True
                 self.__maze_exit = (self.board.width() - 1, pos_y)
-                self.board.set_with_colour(self.board.width() - 1, pos_y, GameEntity.EMPTY, (255,255,255))
+                self.board.set(self.board.width() - 1, pos_y, GameEntity.EMPTY)
 
 class MazeScreen(GameScreen):
     def __init__(self, matrix: Matrix):
         super().__init__(matrix, self.__get_engine, redraw_on_show=False)
-
-    def show(self):
-        self._matrix.clear()
-        self._engine.generate_maze()
-        self._engine.play()
 
     def __get_engine(self) ->GameEngine:
         return MazeEngine(self._scale, self._matrix, 256)
