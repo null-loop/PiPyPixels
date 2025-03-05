@@ -47,6 +47,7 @@ class ImageScreen(Screen):
             self.__thread.start()
         else:
             self.__render_current_image()
+        self.receive_command(Command.PLAY)
 
     def __render_current_image(self):
         if self.__current_image is not None:
