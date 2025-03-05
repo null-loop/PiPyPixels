@@ -17,6 +17,19 @@ class Screen:
         pass
     def is_paused(self):
         pass
+    def wait_for_paused(self):
+        self.wait_for_paused_state(True)
+    def wait_for_playing(self):
+        self.wait_for_paused_state(False)
+    def wait_for_paused_state(self, is_paused:bool):
+        while self.is_paused() != is_paused:
+            time.sleep(1/1000)
+    def hide_and_wait(self):
+        self.hide()
+        self.wait_for_paused()
+    def show_and_wait(self):
+        self.show()
+        self.wait_for_playing()
 
 class ImageScreen(Screen):
     def __init__(self, refresh_interval_seconds, matrix: Matrix):
@@ -85,8 +98,8 @@ class ScreenController:
     def __init__(self, matrix: Matrix):
         self.__screens = []
         self.__thread = None
-        self.__currentScreen = None
-        self.__currentScreenIndex = -1
+        self.__current_screen = None
+        self.__current_screen_index = -1
         self.__powered = True
         self.__matrix = matrix
 
@@ -103,43 +116,42 @@ class ScreenController:
         elif command == Command.POWER: self.__toggle_power()
         elif command == Command.BRIGHTNESS_UP:
             if self.__matrix.increase_brightness():
-                self.__currentScreen.redraw()
+                self.__current_screen.redraw()
         elif command == Command.BRIGHTNESS_DOWN:
             if self.__matrix.decrease_brightness():
-                self.__currentScreen.redraw()
-        else: self.__currentScreen.receive_command(command)
+                self.__current_screen.redraw()
+        else: self.__current_screen.receive_command(command)
 
     def __toggle_power(self):
         if self.__powered:
-            self.__currentScreen.hide()
-            while not self.__currentScreen.is_paused():
+            self.__current_screen.hide()
+            while not self.__current_screen.is_paused():
                 time.sleep(1/1000)
             self.__matrix.clear()
             self.__powered = False
         else:
             self.__powered = True
-            self.__currentScreen.show()
+            self.__current_screen.show()
 
     def __next_screen(self):
-        n = self.__currentScreenIndex + 1
+        n = self.__current_screen_index + 1
         if n == len(self.__screens):
             n = 0
         self.__set_screen_by_index(n)
 
     def __previous_screen(self):
-        n = self.__currentScreenIndex - 1
+        n = self.__current_screen_index - 1
         if n == -1:
             n = len(self.__screens) - 1
         self.__set_screen_by_index(n)
 
     def __set_screen_by_index(self, index:int):
-        self.__currentScreenIndex = index
-        if self.__currentScreen is not None:
-            self.__currentScreen.hide()
-            while not self.__currentScreen.is_paused():
-                time.sleep(1/1000)
-        self.__currentScreen = self.__screens[index]
-        self.__currentScreen.show()
+        self.__current_screen_index = index
+        if self.__current_screen is not None:
+            self.__current_screen.hide_and_wait()
+
+        self.__current_screen = self.__screens[index]
+        self.__current_screen.show_and_wait()
 
     def begin(self):
         self.__set_screen_by_index(0)
