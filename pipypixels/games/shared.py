@@ -25,7 +25,7 @@ class GameBoard:
         self.__height = height
         self.__width = width
         self.__scale = scale
-        self.__matrix = matrix
+        self.matrix = matrix
         self.__cell_colour_func = cell_colour_func
         for _ in range(width):
             self.__entities.append([GameEntity.EMPTY] * height)
@@ -48,7 +48,7 @@ class GameBoard:
         sy = y * self.__scale
         for rx in range(self.__scale):
             for ry in range(self.__scale):
-                self.__matrix.set_pixel(rx + sx, ry + sy, colour[0], colour[1], colour[2])
+                self.matrix.set_pixel(rx + sx, ry + sy, colour[0], colour[1], colour[2])
 
     def get_random_empty_position(self):
         # Randomise x,y until you find an empty location
@@ -167,7 +167,9 @@ class GameEngine:
                     self.__frame_rate = max(self.__frame_rate - 1, 1)
                     self.__update_frame_duration_from_rate()
                 if command == Command.RESET:
+                    self.board.matrix.start_new_canvas()
                     self.reset()
+                    self.board.matrix.finish_canvas()
             if not self.__paused or self.__step_forward:
                 self.__step_forward = False
                 self._game_tick()
@@ -182,15 +184,22 @@ class GameEngine:
     def is_paused(self):
         return self.__paused
 
+    def wait_for_paused(self):
+        self.wait_for_paused_state(True)
+
+    def wait_for_playing(self):
+        self.wait_for_paused_state(False)
+
+    def wait_for_paused_state(self, is_paused:bool):
+        while self.is_paused() != is_paused:
+            time.sleep(1/1000)
+
     def begin(self):
         self.__thread = threading.Thread(target=self.__game_loop)
         self.__thread.start()
 
     def end(self):
         self.receive_command(Command.EXIT)
-
-    def toggle_pause(self):
-        self.receive_command(Command.PAUSE_PLAY)
 
     def play(self):
         if self.__thread is None:
@@ -232,8 +241,7 @@ class GameScreen(Screen):
 
     def __rebuild_engine(self):
         self._engine.pause()
-        while not self._engine.is_paused():
-            time.sleep(1/1000)
+        self._engine.wait_for_paused()
         self._engine.end()
         self._matrix.clear()
         self._engine = self.__engine_func()

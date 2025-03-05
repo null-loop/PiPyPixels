@@ -31,7 +31,6 @@ with dpg.window(tag="Matrix"):
     with dpg.table(header_row=False):
         dpg.add_table_column(width=matrix.panel_width, width_fixed=True)
         dpg.add_table_column()
-
         with dpg.table_row():
             matrix.create_led_panel()
             command_source.create_buttons()

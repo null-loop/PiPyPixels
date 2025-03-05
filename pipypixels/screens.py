@@ -125,9 +125,7 @@ class ScreenController:
 
     def __toggle_power(self):
         if self.__powered:
-            self.__current_screen.hide()
-            while not self.__current_screen.is_paused():
-                time.sleep(1/1000)
+            self.__current_screen.hide_and_wait()
             self.__matrix.clear()
             self.__powered = False
         else:
