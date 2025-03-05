@@ -259,10 +259,12 @@ class SnakeEngine(GameEngine):
         if len(self.__snakes) < 100:
             self.__spawn_snakes(100 - len(self.__snakes))
 
-    def fresh_render(self):
+    def redraw(self):
+        self.board.matrix.start_new_canvas()
         self.board.redraw()
         for snake in self.__snakes:
             snake.redraw_on_board()
+        self.board.matrix.finish_canvas()
 
     def reset(self):
         self.board.reset()

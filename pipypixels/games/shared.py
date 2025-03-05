@@ -167,9 +167,7 @@ class GameEngine:
                     self.__frame_rate = max(self.__frame_rate - 1, 1)
                     self.__update_frame_duration_from_rate()
                 if command == Command.RESET:
-                    self.board.matrix.start_new_canvas()
                     self.reset()
-                    self.board.matrix.finish_canvas()
             if not self.__paused or self.__step_forward:
                 self.__step_forward = False
                 self._game_tick()
@@ -261,4 +259,6 @@ class GameScreen(Screen):
         return self._engine.is_paused()
 
     def redraw(self):
+        self._engine.board.matrix.start_new_canvas()
         self._engine.board.redraw()
+        self._engine.board.matrix.finish_canvas()
