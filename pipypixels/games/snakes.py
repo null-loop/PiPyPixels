@@ -259,24 +259,27 @@ class SnakeEngine(GameEngine):
         if len(self.__snakes) < 100:
             self.__spawn_snakes(100 - len(self.__snakes))
 
-    def redraw(self):
-        self.board.matrix.start_new_canvas()
-        self.board.redraw()
-        for snake in self.__snakes:
-            snake.redraw_on_board()
-        self.board.matrix.finish_canvas()
-
     def reset(self):
         self.board.reset()
         self.__snakes.clear()
         self.starting_spawn()
+
+    def redraw_snakes(self):
+        for snake in self.__snakes:
+            snake.redraw_on_board()
 
     def reset_on_play(self):
         return False
 
 class SnakeScreen(GameScreen):
     def __init__(self, matrix: Matrix):
-        super().__init__(matrix, self.__get_engine)
+        super().__init__(matrix, self.__get_engine, redraw_on_show=True)
 
     def __get_engine(self) -> GameEngine:
         return SnakeEngine(self._scale, self._matrix, 256)
+
+    def redraw(self):
+        self._engine.board.matrix.start_new_canvas()
+        self._engine.board.redraw()
+        self._engine.redraw_snakes()
+        self._engine.board.matrix.finish_canvas()

@@ -231,7 +231,7 @@ class GameScreen(Screen):
     def show(self):
         self._matrix.clear()
         if self.__redraw_on_show:
-            self._engine.board.redraw()
+            self.redraw()
         self._engine.play()
 
     def hide(self):
