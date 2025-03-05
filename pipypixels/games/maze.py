@@ -105,7 +105,7 @@ class MazeEngine(GameEngine):
     def _game_tick(self):
         if self.__wait_until > 0:
             if time.time() > self.__wait_until:
-                self.__generate_maze()
+                self.reset()
         else:
             fin = False
             if self.__state == GameState.NOT_STARTED:
