@@ -5,6 +5,7 @@ import time
 from PIL import Image
 
 from pipypixels.controls.shared import Command
+from pipypixels.graphics import assets
 from pipypixels.graphics.shared import Matrix
 
 
@@ -34,7 +35,7 @@ class Screen:
 class ImageScreen(Screen):
     def __init__(self, refresh_interval_seconds, matrix: Matrix):
         self.__thread = None
-        self.__matrix = matrix
+        self._matrix = matrix
         self.__command_queue = queue.Queue()
         self.__refresh_interval_seconds = refresh_interval_seconds
         self.__last_refresh = 0.0
@@ -51,7 +52,7 @@ class ImageScreen(Screen):
 
     def __render_current_image(self):
         if self.__current_image is not None:
-            self.__matrix.render_image(self.__current_image)
+            self._matrix.render_image(self.__current_image)
 
     def hide(self):
         self.receive_command(Command.PAUSE)
@@ -90,10 +91,16 @@ class ImageScreen(Screen):
 class StartupImageScreen(ImageScreen):
     def __init__(self, matrix: Matrix):
         super().__init__(10000000, matrix)
-        self.__led_icon = Image.open("./assets/led.png")
 
     def _render_image(self) ->Image:
-        return self.__led_icon
+        image = None
+        if self._matrix.config.overall_led_height == 128:
+            image = assets.logo_128_by_128
+        elif self._matrix.config.overall_led_height == 64:
+            image = assets.logo_64_by_64
+        elif self._matrix.config.overall_led_height == 32:
+            image = assets.logo_32_by_32
+        return image
 
 class ScreenController:
     def __init__(self, matrix: Matrix):
@@ -109,19 +116,23 @@ class ScreenController:
 
     def receive_command(self, command:Command):
         print(f'ScreenController::receive_command({command})')
-        if command == Command.PREVIOUS: self.__previous_screen()
-        elif command == Command.NEXT: self.__next_screen()
+        if command == Command.PREVIOUS:
+            self.__previous_screen()
+        elif command == Command.NEXT:
+            self.__next_screen()
         elif command == Command.EXIT:
             for screen in self.__screens:
                 screen.receive_command(command)
-        elif command == Command.POWER: self.__toggle_power()
+        elif command == Command.POWER:
+            self.__toggle_power()
         elif command == Command.BRIGHTNESS_UP:
             if self.__matrix.increase_brightness():
                 self.__current_screen.redraw()
         elif command == Command.BRIGHTNESS_DOWN:
             if self.__matrix.decrease_brightness():
                 self.__current_screen.redraw()
-        else: self.__current_screen.receive_command(command)
+        else:
+            self.__current_screen.receive_command(command)
 
     def __toggle_power(self):
         if self.__powered:

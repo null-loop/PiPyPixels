@@ -16,10 +16,10 @@ config = MatrixConfiguration()
 config.brightness = 100
 matrix = FakeMatrix(config)
 controller = ScreenController(matrix)
+controller.add_screen(StartupImageScreen(matrix))
 controller.add_screen(SnakeScreen(matrix))
 controller.add_screen(MazeScreen(matrix))
 controller.add_screen(GameOfLifeScreen(matrix))
-controller.add_screen(StartupImageScreen(matrix))
 command_source = UICommandSource(controller)
 
 dpg.create_context()

@@ -13,9 +13,9 @@ from pipypixels.screens import ScreenController, StartupImageScreen
 config = MatrixConfiguration()
 matrix = ScreenMatrix(config)
 controller = ScreenController(matrix)
+controller.add_screen(StartupImageScreen(matrix))
 controller.add_screen(SnakeScreen(matrix))
 controller.add_screen(MazeScreen(matrix))
-controller.add_screen(StartupImageScreen(matrix))
 controller.add_screen(GameOfLifeScreen(matrix))
 command_source = RemoteKeyboardCommandSource(controller)
 

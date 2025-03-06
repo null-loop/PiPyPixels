@@ -11,12 +11,12 @@ class ScreenMatrix(Matrix):
         self.__options = RGBMatrixOptions()
 
         # figure out how many panels in rows / cols
-        self.__panel_rows = config.overall_led_rows / config.panel_led_rows
-        self.__panel_cols = config.overall_led_cols / config.panel_led_cols
+        self.__panel_rows = config.overall_led_height / config.panel_led_height
+        self.__panel_cols = config.overall_led_width / config.panel_led_width
         self.__options.chain_length = self.__panel_cols * self.__panel_rows
 
-        self.__options.rows = config.panel_led_rows
-        self.__options.cols = config.panel_led_cols
+        self.__options.rows = config.panel_led_height
+        self.__options.cols = config.panel_led_width
         self.__options.parallel = 1
         self.__options.hardware_mapping = config.hardware_mapping
         self.__options.gpio_slowdown = config.gpio_slowdown
@@ -37,12 +37,12 @@ class ScreenMatrix(Matrix):
     def render_image(self, image: Image):
         if self.__panel_rows > 1:
             # rearrange for rendering...
-            top_half = image.crop((0, 0, self.config.overall_led_cols, self.config.panel_led_rows))
-            bottom_half = image.crop((0, self.config.panel_led_rows, self.config.overall_led_cols, self.config.overall_led_rows))
+            top_half = image.crop((0, 0, self.config.overall_led_width, self.config.panel_led_height))
+            bottom_half = image.crop((0, self.config.panel_led_height, self.config.overall_led_width, self.config.overall_led_height))
 
-            stitched = Image.new('RGB', (self.config.overall_led_cols * 2, self.config.panel_led_rows))
+            stitched = Image.new('RGB', (self.config.overall_led_width * 2, self.config.panel_led_height))
             stitched.paste(top_half, (0, 0))
-            stitched.paste(bottom_half, (self.config.overall_led_cols, 0))
+            stitched.paste(bottom_half, (self.config.overall_led_width, 0))
 
             rgb = stitched.convert('RGB')
         else:
@@ -59,9 +59,9 @@ class ScreenMatrix(Matrix):
         t_x = x
         t_y = y
         if self.__panel_rows > 1:
-            if t_y >= self.config.panel_led_rows:
-                t_x = t_x + self.config.overall_led_cols
-                t_y = t_y - self.config.panel_led_rows
+            if t_y >= self.config.panel_led_height:
+                t_x = t_x + self.config.overall_led_width
+                t_y = t_y - self.config.panel_led_height
         if self.__next_canvas is not None:
             self.__next_canvas.SetPixel(t_x, t_y, r, g, b)
         else:
