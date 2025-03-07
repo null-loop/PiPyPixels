@@ -1,6 +1,7 @@
 import dearpygui.dearpygui as dpg
 
 from pipypixels.controls.shared import Command
+from pipypixels.games.breakout import BreakoutScreen
 from pipypixels.games.life import GameOfLifeScreen
 from pipypixels.games.maze import MazeScreen
 from pipypixels.games.snakes import SnakeScreen
@@ -16,6 +17,7 @@ config = MatrixConfiguration()
 config.brightness = 100
 matrix = FakeMatrix(config)
 controller = ScreenController(matrix)
+controller.add_screen(BreakoutScreen(matrix))
 controller.add_screen(StartupImageScreen(matrix))
 controller.add_screen(SnakeScreen(matrix))
 controller.add_screen(MazeScreen(matrix))
