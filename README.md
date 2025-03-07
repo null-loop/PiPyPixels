@@ -24,7 +24,7 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [x] Write game startups to fresh canvas (Snake / Maze / Life) - won't affect local
 * [x] Scale image StartupScreen
 * [x] pi-test.py
-* [ ] StartupScreen needs to remove itself from the screens when navigated away from / after a time period
+* [x] StartupScreen needs to remove itself from the screens when navigated away from / after a time period
 * [ ] Options types
 * [ ] Reading config from JSON
 * [ ] Secret management approach

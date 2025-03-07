@@ -18,7 +18,6 @@ class Command(IntEnum):
     ZOOM_OUT = 12
     PAUSE = 13
     PLAY = 14
-    PAUSE_AND_CLEAR = 15 # TODO: Implement support for this and remove the other clear mechanisms, and refs to matrix where not needed anymore!
     PRESET_1 = 100
     PRESET_2 = 101
     PRESET_3 = 102
@@ -29,4 +28,5 @@ class Command(IntEnum):
     PRESET_8 = 107
     PRESET_9 = 108
     PRESET_10 = 109
+    NEXT_AND_REMOVE = 200
     EXIT = 999
