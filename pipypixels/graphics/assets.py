@@ -1,4 +1,11 @@
-from PIL import Image
+from PIL import Image, ImageFont
+
+__fonts = {}
+
+def font_custom(size:int)->ImageFont:
+    if not size in __fonts:
+        __fonts[size] = ImageFont.truetype("./assets/NotoSans-Regular.ttf", size)
+    return __fonts[size]
 
 logo_128_by_128 = Image.open('./assets/logo-128-by-128.png')
 logo_64_by_64 = Image.open('./assets/logo-64-by-64.png')
