@@ -120,8 +120,8 @@ class GameBoard:
 
 class GameEngine:
     def __init__(self, scale, matrix: Matrix, frame_rate):
-        width = self._calculate_game_board_width(matrix.config.overall_led_cols, scale)
-        height = self._calculate_game_board_height(matrix.config.overall_led_rows, scale)
+        width = self._calculate_game_board_width(matrix.config.overall_led_width, scale)
+        height = self._calculate_game_board_height(matrix.config.overall_led_height, scale)
         self.board = GameBoard(width, height, scale, matrix, self._colour_cell_func)
         self.__thread = None
         self.__command_queue = queue.Queue()

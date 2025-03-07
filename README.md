@@ -22,9 +22,9 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [x] pause_and_wait() methods
 * [x] Ensure we're using commands everywhere we can - review use of the above method!
 * [x] Write game startups to fresh canvas (Snake / Maze / Life) - won't affect local
-* [ ] Dynamic StartupScreen
-* [ ] pi-test.py
-* [ ] StartupScreen needs to remove itself from the screens when navigated away from / after a time period
+* [x] Scale image StartupScreen
+* [x] pi-test.py
+* [x] StartupScreen needs to remove itself from the screens when navigated away from / after a time period
 * [ ] Options types
 * [ ] Reading config from JSON
 * [ ] Secret management approach
@@ -58,7 +58,6 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 ## Attribution
 
 * [RGB LED Driver](https://github.com/hzeller/rpi-rgb-led-matrix) - Obvs.
-* [Payungkead](https://www.flaticon.com/authors/payungkead) - LED Icon
 
 ## Known Issues
 

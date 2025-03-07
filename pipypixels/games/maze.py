@@ -82,12 +82,14 @@ class MazeEngine(GameEngine):
 
     def _calculate_game_board_width(self, led_cols, scale):
         w = int(math.floor(led_cols / scale))
-        if w % 2 == 0 : w = w - 1
+        if w % 2 == 0:
+            w = w - 1
         return w
 
     def _calculate_game_board_height(self, led_rows, scale):
         h = int(math.floor(led_rows / scale))
-        if h % 2 == 0 : h = h - 1
+        if h % 2 == 0:
+            h = h - 1
         return h
 
     def _colour_cell_func(self, x, y, entity_type):

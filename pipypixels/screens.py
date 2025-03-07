@@ -5,10 +5,12 @@ import time
 from PIL import Image
 
 from pipypixels.controls.shared import Command
+from pipypixels.graphics import assets
 from pipypixels.graphics.shared import Matrix
 
 
 class Screen:
+    __observer = None
     def show(self):
         pass
     def hide(self):
@@ -30,11 +32,17 @@ class Screen:
     def show_and_wait(self):
         self.show()
         self.wait_for_playing()
+    def set_command_observer(self, observer):
+        self.__observer = observer
+    def _send_command_to_observer(self, command:Command):
+        if self.__observer is not None:
+            self.__observer.receive_command(command)
+
 
 class ImageScreen(Screen):
     def __init__(self, refresh_interval_seconds, matrix: Matrix):
         self.__thread = None
-        self.__matrix = matrix
+        self._matrix = matrix
         self.__command_queue = queue.Queue()
         self.__refresh_interval_seconds = refresh_interval_seconds
         self.__last_refresh = 0.0
@@ -51,7 +59,7 @@ class ImageScreen(Screen):
 
     def __render_current_image(self):
         if self.__current_image is not None:
-            self.__matrix.render_image(self.__current_image)
+            self._matrix.render_image(self.__current_image)
 
     def hide(self):
         self.receive_command(Command.PAUSE)
@@ -89,11 +97,20 @@ class ImageScreen(Screen):
 
 class StartupImageScreen(ImageScreen):
     def __init__(self, matrix: Matrix):
-        super().__init__(10000000, matrix)
-        self.__led_icon = Image.open("./assets/led.png")
+        super().__init__(1, matrix)
+        self.__time_to_move_on = time.time() + 10
 
     def _render_image(self) ->Image:
-        return self.__led_icon
+        if time.time() > self.__time_to_move_on:
+            self._send_command_to_observer(Command.NEXT_AND_REMOVE)
+        image = None
+        if self._matrix.config.overall_led_height == 128:
+            image = assets.logo_128_by_128
+        elif self._matrix.config.overall_led_height == 64:
+            image = assets.logo_64_by_64
+        elif self._matrix.config.overall_led_height == 32:
+            image = assets.logo_32_by_32
+        return image
 
 class ScreenController:
     def __init__(self, matrix: Matrix):
@@ -103,25 +120,55 @@ class ScreenController:
         self.__current_screen_index = -1
         self.__powered = True
         self.__matrix = matrix
+        self.__command_queue = queue.Queue()
+
+    def begin(self):
+        self.__set_screen_by_index(0)
+        self.__thread = threading.Thread(target=self.__controller_loop)
+        self.__thread.start()
 
     def add_screen(self, screen:Screen):
         self.__screens.append(screen)
+        screen.set_command_observer(self)
+
+    def __controller_loop(self):
+        while True:
+            if not self.__command_queue.empty():
+                command = self.__command_queue.get()
+                print(f'ScreenController::{command}')
+                if command == Command.EXIT:
+                    for screen in self.__screens:
+                        screen.receive_command(command)
+                    return
+                if command == Command.PAUSE_PLAY:
+                    self.__paused = not self.__paused
+                if command == Command.PLAY:
+                    self.__paused = False
+                if command == Command.PAUSE:
+                    self.__paused = True
+                if command == Command.PREVIOUS:
+                    self.__previous_screen()
+                elif command == Command.NEXT:
+                    self.__next_screen()
+                elif command == Command.BRIGHTNESS_UP:
+                    if self.__matrix.increase_brightness():
+                        self.__current_screen.redraw()
+                elif command == Command.BRIGHTNESS_DOWN:
+                    if self.__matrix.decrease_brightness():
+                        self.__current_screen.redraw()
+                elif command == Command.POWER:
+                    self.__toggle_power()
+                elif command == Command.NEXT_AND_REMOVE:
+                    self.__current_screen.hide_and_wait()
+                    self.__current_screen.receive_command(Command.EXIT)
+                    self.__screens.remove(self.__current_screen)
+                    self.__set_screen_by_index(0)
+                else:
+                    self.__current_screen.receive_command(command)
+            time.sleep(1/100)
 
     def receive_command(self, command:Command):
-        print(f'ScreenController::receive_command({command})')
-        if command == Command.PREVIOUS: self.__previous_screen()
-        elif command == Command.NEXT: self.__next_screen()
-        elif command == Command.EXIT:
-            for screen in self.__screens:
-                screen.receive_command(command)
-        elif command == Command.POWER: self.__toggle_power()
-        elif command == Command.BRIGHTNESS_UP:
-            if self.__matrix.increase_brightness():
-                self.__current_screen.redraw()
-        elif command == Command.BRIGHTNESS_DOWN:
-            if self.__matrix.decrease_brightness():
-                self.__current_screen.redraw()
-        else: self.__current_screen.receive_command(command)
+        self.__command_queue.put(command)
 
     def __toggle_power(self):
         if self.__powered:
@@ -151,6 +198,3 @@ class ScreenController:
 
         self.__current_screen = self.__screens[index]
         self.__current_screen.show_and_wait()
-
-    def begin(self):
-        self.__set_screen_by_index(0)

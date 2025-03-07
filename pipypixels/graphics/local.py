@@ -11,8 +11,8 @@ class FakeMatrix(Matrix):
         self.__led_size = 5
         self.__brightness = config.brightness
 
-        self.panel_width = config.overall_led_cols * self.__led_size
-        self.panel_height = config.overall_led_rows * self.__led_size
+        self.panel_width = config.overall_led_width * self.__led_size
+        self.panel_height = config.overall_led_height * self.__led_size
 
         self.__created_pixels = False
 
@@ -24,8 +24,8 @@ class FakeMatrix(Matrix):
 
     def clear(self):
         self.__ensure_pixels_created()
-        for x in range(self.config.overall_led_cols):
-            for y in range(self.config.overall_led_rows):
+        for x in range(self.config.overall_led_width):
+            for y in range(self.config.overall_led_height):
                 self.set_pixel(x,y,0,0,0)
 
     def __ensure_pixels_created(self):
@@ -39,8 +39,8 @@ class FakeMatrix(Matrix):
 
     def create_pixels(self):
         self.__created_pixels = True
-        for x in range(self.config.overall_led_cols):
-            for y in range(self.config.overall_led_rows):
+        for x in range(self.config.overall_led_width):
+            for y in range(self.config.overall_led_height):
                 t_x = x * self.__led_size
                 t_y = y * self.__led_size
                 p_min = (t_x, t_y)
