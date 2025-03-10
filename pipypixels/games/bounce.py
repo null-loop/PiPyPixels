@@ -12,6 +12,7 @@ class BounceEngine(VectorGameEngine):
 
     def reset(self):
         self.board.reset()
+        self.__balls.clear()
         self.__draw_walls()
         self.__spawn_balls(100)
 
