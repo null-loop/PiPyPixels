@@ -98,7 +98,7 @@ class ImageScreen(Screen):
 class StartupImageScreen(ImageScreen):
     def __init__(self, matrix: Matrix):
         super().__init__(1, matrix)
-        self.__time_to_move_on = time.time() + 10
+        self.__time_to_move_on = time.time() + 4
 
     def _render_image(self) ->Image:
         if time.time() > self.__time_to_move_on:
@@ -140,12 +140,6 @@ class ScreenController:
                     for screen in self.__screens:
                         screen.receive_command(command)
                     return
-                if command == Command.PAUSE_PLAY:
-                    self.__paused = not self.__paused
-                if command == Command.PLAY:
-                    self.__paused = False
-                if command == Command.PAUSE:
-                    self.__paused = True
                 if command == Command.PREVIOUS:
                     self.__previous_screen()
                 elif command == Command.NEXT:

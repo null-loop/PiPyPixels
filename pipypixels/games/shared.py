@@ -18,6 +18,7 @@ class GameEntity(Enum):
     FOOD = 3
     CELL = 3
     SOLVER = 5
+    BALL = 6
 
 class GameBoard:
     def __init__(self, width, height, scale, matrix, cell_colour_func):
@@ -262,3 +263,8 @@ class GameScreen(Screen):
         self._engine.board.matrix.start_new_canvas()
         self._engine.board.redraw()
         self._engine.board.matrix.finish_canvas()
+
+class VectorGameEngine(GameEngine):
+    def __init__(self, scale, matrix: Matrix, frame_rate):
+        super().__init__(scale, matrix, frame_rate)
+
