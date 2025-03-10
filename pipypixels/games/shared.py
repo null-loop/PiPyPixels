@@ -18,6 +18,7 @@ class GameEntity(Enum):
     FOOD = 3
     CELL = 3
     SOLVER = 5
+    BALL = 6
 
 class GameBoard:
     def __init__(self, width, height, scale, matrix, cell_colour_func):
