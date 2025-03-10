@@ -92,6 +92,9 @@ class BounceEngine(VectorGameEngine):
 
         return (nx, ny),(a, v)
 
+    def reset_on_play(self):
+        return False
+
 class BounceScreen(GameScreen):
     def __init__(self, matrix: Matrix):
         super().__init__(matrix, self.__get_engine, redraw_on_show=True)
