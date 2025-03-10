@@ -104,4 +104,4 @@ class BounceScreen(GameScreen):
         super().__init__(matrix, self.__get_engine, redraw_on_show=True)
 
     def __get_engine(self) ->GameEngine:
-        return BounceEngine(self._scale, self._matrix, 100)
+        return BounceEngine(self._scale, self._matrix, 60)
