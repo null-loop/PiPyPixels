@@ -18,14 +18,18 @@ class BounceEngine(VectorGameEngine):
 
     def __spawn_balls(self, count:int):
         for _ in range(count):
-            ball = (self.board.get_random_empty_position(),(randrange(0,180) - 90,0.5))
+            ball = (self.board.get_random_empty_position(),(randrange(0,180) - 90,0.6),(randrange(100,250),0,160))
             self.__balls.append(ball)
 
     def __clear_ball(self, position:(float,float)):
         self.board.set(int(position[0]), int(position[1]), GameEntity.EMPTY)
 
-    def __draw_ball(self, position:(float,float)):
-        self.board.set(int(position[0]), int(position[1]), GameEntity.BALL)
+    def __draw_ball(self, position:(float,float), colour):
+        self.board.set_with_colour(int(position[0]), int(position[1]), GameEntity.BALL, colour)
+
+    def redraw_balls(self):
+        for ball in self.__balls:
+            self.__draw_ball(ball[0],ball[2])
 
     def _colour_cell_func(self, x, y, entity_type):
         colour = [0,0,0]
@@ -51,9 +55,9 @@ class BounceEngine(VectorGameEngine):
             # __clear_ball
             self.__clear_ball(ball[0])
             # update ball pos
-            self.__balls[i] = next_pos_and_vector
+            self.__balls[i] = (next_pos_and_vector[0],next_pos_and_vector[1],ball[2])
             # __draw_ball
-            self.__draw_ball(next_pos_and_vector[0])
+            self.__draw_ball(next_pos_and_vector[0], ball[2])
 
     @staticmethod
     def __angle_overflow(angle:float)->float:
@@ -76,19 +80,19 @@ class BounceEngine(VectorGameEngine):
         dy = my - y
         if nx <= 1:
             nx = 1
-            a = self.__angle_overflow(360 - a) + dy
+            a = self.__angle_overflow(360 - a + dy)
 
         if nx >= self.board.width() - 2:
             nx = self.board.width() - 2
-            a = self.__angle_overflow(360 - a) + dy
+            a = self.__angle_overflow(360 - a + dy)
 
         if ny <= 1:
             ny = 1
-            a = self.__angle_overflow(180 - a) + dx
+            a = self.__angle_overflow(180 - a + dx)
 
         if ny >= self.board.height() - 2:
             ny = self.board.height() - 2
-            a = self.__angle_overflow(180 - a) + dx
+            a = self.__angle_overflow(180 - a + dx)
 
         # adjust for gravity. a tends toward 180
         da = 0.36 if a < 180 else -0.36
@@ -105,3 +109,9 @@ class BounceScreen(GameScreen):
 
     def __get_engine(self) ->GameEngine:
         return BounceEngine(self._scale, self._matrix, 60)
+
+    def redraw(self):
+        self._engine.board.matrix.start_new_canvas()
+        self._engine.board.redraw()
+        self._engine.redraw_balls()
+        self._engine.board.matrix.finish_canvas()
