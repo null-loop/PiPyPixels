@@ -98,7 +98,7 @@ class ImageScreen(Screen):
 class StartupImageScreen(ImageScreen):
     def __init__(self, matrix: Matrix):
         super().__init__(1, matrix)
-        self.__time_to_move_on = time.time() + 10
+        self.__time_to_move_on = time.time() + 4
 
     def _render_image(self) ->Image:
         if time.time() > self.__time_to_move_on:
