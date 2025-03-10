@@ -18,7 +18,7 @@ class BounceEngine(VectorGameEngine):
 
     def __spawn_balls(self, count:int):
         for _ in range(count):
-            ball = (self.board.get_random_empty_position(),(randrange(0,360),0.5))
+            ball = (self.board.get_random_empty_position(),(randrange(0,180) - 90,0.5))
             self.__balls.append(ball)
 
     def __clear_ball(self, position:(float,float)):
@@ -89,6 +89,10 @@ class BounceEngine(VectorGameEngine):
         if ny >= self.board.height() - 2:
             ny = self.board.height() - 2
             a = self.__angle_overflow(180 - a) + dx
+
+        # adjust for gravity. a tends toward 180
+        da = 0.36 if a < 180 else -0.36
+        a = a + da
 
         return (nx, ny),(a, v)
 
