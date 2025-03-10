@@ -77,22 +77,29 @@ class BounceEngine(VectorGameEngine):
         if nx <= 1:
             nx = 1
             a = self.__angle_overflow(360 - a) + dy
+            v = 0.5
 
         if nx >= self.board.width() - 2:
             nx = self.board.width() - 2
             a = self.__angle_overflow(360 - a) + dy
+            v = 0.5
 
         if ny <= 1:
             ny = 1
             a = self.__angle_overflow(180 - a) + dx
+            v = 0.5
 
         if ny >= self.board.height() - 2:
             ny = self.board.height() - 2
             a = self.__angle_overflow(180 - a) + dx
+            v = 0.5
 
         # adjust for gravity. a tends toward 180
         da = 0.36 if a < 180 else -0.36
         a = a + da
+        if 90 < a < 270 and v < 1:
+            dv = 0.1 * math.fabs(180-a)
+            v = v + dv
 
         return (nx, ny),(a, v)
 
