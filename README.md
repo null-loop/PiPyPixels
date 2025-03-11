@@ -25,6 +25,8 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [x] Scale image StartupScreen
 * [x] pi-test.py
 * [x] StartupScreen needs to remove itself from the screens when navigated away from / after a time period
+* [x] ArtworkScreen
+* [x] Show StartupScreen on Power On
 * [ ] Options types
 * [ ] Reading config from JSON
 * [ ] Secret management approach

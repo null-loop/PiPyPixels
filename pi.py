@@ -9,12 +9,13 @@ from pipypixels.games.maze import MazeScreen
 from pipypixels.games.snakes import SnakeScreen
 from pipypixels.graphics.pi import ScreenMatrix
 from pipypixels.graphics.shared import MatrixConfiguration
-from pipypixels.screens import ScreenController, StartupImageScreen
+from pipypixels.screens import ScreenController, StartupImageScreen, ArtImageScreen
 
 config = MatrixConfiguration()
 matrix = ScreenMatrix(config)
 controller = ScreenController(matrix)
 controller.add_screen(StartupImageScreen(matrix))
+controller.add_screen(ArtImageScreen(matrix))
 controller.add_screen(BounceScreen(matrix))
 controller.add_screen(SnakeScreen(matrix))
 controller.add_screen(MazeScreen(matrix))

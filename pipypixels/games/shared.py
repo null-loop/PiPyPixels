@@ -161,10 +161,10 @@ class GameEngine:
                     self.__paused = True
                 if command == Command.STEP_FORWARD:
                     self.__step_forward = True
-                if command == Command.FRAMERATE_UP:
+                if command == Command.FRAME_RATE_UP:
                     self.__frame_rate = self.__frame_rate + 1
                     self.__update_frame_duration_from_rate()
-                if command == Command.FRAMERATE_DOWN:
+                if command == Command.FRAME_RATE_DOWN:
                     self.__frame_rate = max(self.__frame_rate - 1, 1)
                     self.__update_frame_duration_from_rate()
                 if command == Command.RESET:

@@ -1,6 +1,7 @@
 import queue
 import threading
 import time
+from random import randrange
 
 from PIL import Image
 
@@ -73,6 +74,12 @@ class ImageScreen(Screen):
     def is_paused(self):
         return self.__paused
 
+    def step_back(self):
+        pass
+
+    def step_forward(self):
+        pass
+
     def __refresh_loop(self):
         while True:
             if not self.__command_queue.empty():
@@ -85,6 +92,12 @@ class ImageScreen(Screen):
                     self.__paused = False
                 if command == Command.PAUSE:
                     self.__paused = True
+                if command == Command.STEP_BACKWARD:
+                    self.step_back()
+                    self.__last_refresh = -1
+                if command == Command.STEP_FORWARD:
+                    self.step_forward()
+                    self.__last_refresh = -1
             time_now = time.time()
             if time_now > self.__last_refresh + self.__refresh_interval_seconds and not self.__paused:
                 self.__last_refresh = time_now
@@ -112,6 +125,28 @@ class StartupImageScreen(ImageScreen):
             image = assets.logo_32_by_32
         return image
 
+class ArtImageScreen(ImageScreen):
+    def __init__(self, matrix: Matrix):
+        super().__init__(10000, matrix)
+        self.__current_artwork_index = 0
+
+    def __overflow_artwork_index(self):
+        if self.__current_artwork_index >= len(assets.artwork):
+            self.__current_artwork_index = 0
+        elif self.__current_artwork_index < 0:
+            self.__current_artwork_index = len(assets.artwork) - 1
+
+    def _render_image(self) ->Image:
+        return assets.artwork[self.__current_artwork_index]
+
+    def step_back(self):
+        self.__current_artwork_index = self.__current_artwork_index - 1
+        self.__overflow_artwork_index()
+
+    def step_forward(self):
+        self.__current_artwork_index = self.__current_artwork_index + 1
+        self.__overflow_artwork_index()
+
 class ScreenController:
     def __init__(self, matrix: Matrix):
         self.__screens = []
@@ -131,11 +166,14 @@ class ScreenController:
         self.__screens.append(screen)
         screen.set_command_observer(self)
 
+    def insert_screen(self, index:int, screen:Screen):
+        self.__screens.insert(index, screen)
+        screen.set_command_observer(self)
+
     def __controller_loop(self):
         while True:
             if not self.__command_queue.empty():
                 command = self.__command_queue.get()
-                print(f'ScreenController::{command}')
                 if command == Command.EXIT:
                     for screen in self.__screens:
                         screen.receive_command(command)
@@ -169,9 +207,18 @@ class ScreenController:
             self.__current_screen.hide_and_wait()
             self.__matrix.clear()
             self.__powered = False
+            self.__remove_startup_screen_if_present()
         else:
+            self.__current_screen = StartupImageScreen(self.__matrix)
+            self.insert_screen(self.__current_screen_index, self.__current_screen)
             self.__powered = True
             self.__current_screen.show()
+
+    def __remove_startup_screen_if_present(self):
+        for i in range(len(self.__screens)):
+            screen = self.__screens[i]
+            if type(screen) == type(StartupImageScreen):
+                self.__screens.remove(screen)
 
     def __next_screen(self):
         n = self.__current_screen_index + 1

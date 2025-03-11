@@ -12,8 +12,8 @@ class Command(IntEnum):
     PAUSE_PLAY = 6
     BRIGHTNESS_UP = 7
     BRIGHTNESS_DOWN = 8
-    FRAMERATE_UP = 9
-    FRAMERATE_DOWN = 10
+    FRAME_RATE_UP = 9
+    FRAME_RATE_DOWN = 10
     ZOOM_IN = 11
     ZOOM_OUT = 12
     PAUSE = 13
