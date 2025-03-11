@@ -38,11 +38,11 @@ class UICommandSource:
     def __brightness_down(self):
         self.__screen_controller.receive_command(Command.BRIGHTNESS_DOWN)
 
-    def __framerate_up(self):
-        self.__screen_controller.receive_command(Command.FRAMERATE_UP)
+    def __frame_rate_up(self):
+        self.__screen_controller.receive_command(Command.FRAME_RATE_UP)
 
-    def __framerate_down(self):
-        self.__screen_controller.receive_command(Command.FRAMERATE_DOWN)
+    def __frame_rate_down(self):
+        self.__screen_controller.receive_command(Command.FRAME_RATE_DOWN)
 
     def __reset(self):
         self.__screen_controller.receive_command(Command.RESET)
@@ -70,5 +70,5 @@ class UICommandSource:
                     dpg.add_button(label='Brightness Up', callback=self.__brightness_up)
                     dpg.add_button(label='Brightness Down', callback=self.__brightness_down)
                 with dpg.table_row():
-                    dpg.add_button(label='Framerate Up', callback=self.__framerate_up)
-                    dpg.add_button(label='Framerate Down', callback=self.__framerate_down)
+                    dpg.add_button(label='Frame Rate Up', callback=self.__frame_rate_up)
+                    dpg.add_button(label='Frame Rate Down', callback=self.__frame_rate_down)

@@ -29,8 +29,8 @@ class RemoteKeyboardCommandSource:
         elif scan_code == 113: command = Command.RESET
         elif scan_code == 115: command = Command.BRIGHTNESS_UP
         elif scan_code == 114: command = Command.BRIGHTNESS_DOWN
-        elif scan_code == 104: command = Command.FRAMERATE_UP
-        elif scan_code == 109: command = Command.FRAMERATE_DOWN
+        elif scan_code == 104: command = Command.FRAME_RATE_UP
+        elif scan_code == 109: command = Command.FRAME_RATE_DOWN
         elif scan_code == 418: command = Command.ZOOM_IN
         elif scan_code == 419: command = Command.ZOOM_OUT
 
