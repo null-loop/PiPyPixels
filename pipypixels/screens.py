@@ -166,11 +166,14 @@ class ScreenController:
         self.__screens.append(screen)
         screen.set_command_observer(self)
 
+    def insert_screen(self, index:int, screen:Screen):
+        self.__screens.insert(index, screen)
+        screen.set_command_observer(self)
+
     def __controller_loop(self):
         while True:
             if not self.__command_queue.empty():
                 command = self.__command_queue.get()
-                print(f'ScreenController::{command}')
                 if command == Command.EXIT:
                     for screen in self.__screens:
                         screen.receive_command(command)
@@ -204,9 +207,18 @@ class ScreenController:
             self.__current_screen.hide_and_wait()
             self.__matrix.clear()
             self.__powered = False
+            self.__remove_startup_screen_if_present()
         else:
+            self.__current_screen = StartupImageScreen(self.__matrix)
+            self.insert_screen(self.__current_screen_index, self.__current_screen)
             self.__powered = True
             self.__current_screen.show()
+
+    def __remove_startup_screen_if_present(self):
+        for i in range(len(self.__screens)):
+            screen = self.__screens[i]
+            if type(screen) == type(StartupImageScreen):
+                self.__screens.remove(screen)
 
     def __next_screen(self):
         n = self.__current_screen_index + 1
