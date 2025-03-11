@@ -23,6 +23,9 @@ class UICommandSource:
     def __step_forward(self):
         self.__screen_controller.receive_command(Command.STEP_FORWARD)
 
+    def __step_back(self):
+        self.__screen_controller.receive_command(Command.STEP_BACKWARD)
+
     def __zoom_in(self):
         self.__screen_controller.receive_command(Command.ZOOM_IN)
 
@@ -54,7 +57,9 @@ class UICommandSource:
                     dpg.add_button(label='Reset', callback=self.__reset)
                 with dpg.table_row():
                     dpg.add_button(label='Pause / Play', callback=self.__pause_play)
-                    dpg.add_button(label='Step Fwd', callback=self.__step_forward)
+                with dpg.table_row():
+                    dpg.add_button(label='Step Back', callback=self.__step_back)
+                    dpg.add_button(label='Step Forward', callback=self.__step_forward)
                 with dpg.table_row():
                     dpg.add_button(label='Prev', callback=self.__previous)
                     dpg.add_button(label='Next', callback=self.__next)

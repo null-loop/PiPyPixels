@@ -7,7 +7,7 @@ from pipypixels.games.maze import MazeScreen
 from pipypixels.games.snakes import SnakeScreen
 from pipypixels.graphics.local import FakeMatrix
 from pipypixels.graphics.shared import MatrixConfiguration
-from pipypixels.screens import ScreenController, StartupImageScreen
+from pipypixels.screens import ScreenController, StartupImageScreen, ArtImageScreen
 from pipypixels.controls.local import UICommandSource
 
 def __exit_app():
@@ -18,6 +18,7 @@ config.brightness = 100
 matrix = FakeMatrix(config)
 controller = ScreenController(matrix)
 controller.add_screen(StartupImageScreen(matrix))
+controller.add_screen(ArtImageScreen(matrix))
 controller.add_screen(BounceScreen(matrix))
 controller.add_screen(SnakeScreen(matrix))
 controller.add_screen(MazeScreen(matrix))
