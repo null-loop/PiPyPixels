@@ -20,24 +20,27 @@ class GameEntity(Enum):
     SOLVER = 5
     BALL = 6
 
+class GameBoardConfiguration:
+    width = 128
+    height = 128
+    scale = 1
+    cell_colour_func = None
+
 class GameBoard:
-    def __init__(self, width, height, scale, matrix, cell_colour_func):
+    def __init__(self, config:GameBoardConfiguration, matrix:Matrix):
         self.__entities = []
-        self.__height = height
-        self.__width = width
-        self.__scale = scale
+        self.__config = config
         self.matrix = matrix
-        self.__cell_colour_func = cell_colour_func
-        for _ in range(width):
-            self.__entities.append([GameEntity.EMPTY] * height)
+        for _ in range(self.__config.width):
+            self.__entities.append([GameEntity.EMPTY] * self.__config.height)
 
     def get(self, x, y) -> GameEntity:
-        if x < 0 or x >= self.__width or y < 0 or y >= self.__height:
+        if x < 0 or x >= self.__config.width or y < 0 or y >= self.__config.height:
             return GameEntity.EMPTY
         return self.__entities[x][y]
 
     def set(self, x, y, entity_type: GameEntity, set_matrix=True):
-        colour = self.__cell_colour_func(x, y, entity_type)
+        colour = self.__config.cell_colour_func(x, y, entity_type)
 
         self.set_with_colour(x, y, entity_type, colour, set_matrix)
 
@@ -45,10 +48,10 @@ class GameBoard:
         self.__entities[x][y] = entity_type
         if not set_matrix:
             return
-        sx = x * self.__scale
-        sy = y * self.__scale
-        for rx in range(self.__scale):
-            for ry in range(self.__scale):
+        sx = x * self.__config.scale
+        sy = y * self.__config.scale
+        for rx in range(self.__config.scale):
+            for ry in range(self.__config.scale):
                 self.matrix.set_pixel(rx + sx, ry + sy, colour[0], colour[1], colour[2])
 
     def get_random_empty_position(self):
@@ -67,14 +70,14 @@ class GameBoard:
             count += self.is_neighbour(x - 1, y + 1)
         count += self.is_neighbour(x, y - 1)
         count += self.is_neighbour(x, y + 1)
-        if x < self.__width - 1:
+        if x < self.__config.width - 1:
             count += self.is_neighbour(x + 1, y - 1)
             count += self.is_neighbour(x + 1, y)
             count += self.is_neighbour(x + 1, y + 1)
         return count
 
     def is_neighbour(self, x, y)->int:
-        if y < 0 or y >= self.__height:
+        if y < 0 or y >= self.__config.height:
             return 0
         if self.__entities[x][y] == GameEntity.CELL:
             return 1
@@ -89,7 +92,7 @@ class GameBoard:
             self.__add_if_entity_type(x - 1, y,entity_type,neighbours)
         self.__add_if_entity_type(x, y - 1,entity_type,neighbours)
         self.__add_if_entity_type(x, y + 1,entity_type,neighbours)
-        if x < self.__width - 1:
+        if x < self.__config.width - 1:
             self.__add_if_entity_type(x + 1, y,entity_type,neighbours)
         return neighbours
 
@@ -97,21 +100,21 @@ class GameBoard:
         self.reset_to_type(GameEntity.EMPTY, set_matrix)
 
     def reset_to_type(self, entity_type: GameEntity, set_matrix=True):
-        for x in range(self.__width):
-            for y in range(self.__height):
+        for x in range(self.__config.width):
+            for y in range(self.__config.height):
                 self.set(x, y, entity_type, set_matrix)
 
     def redraw(self):
-        for x in range(self.__width):
-            for y in range(self.__height):
+        for x in range(self.__config.width):
+            for y in range(self.__config.height):
                 e = self.get(x, y)
                 self.set(x, y, e)
 
     def width(self)->int:
-        return self.__width
+        return self.__config.width
 
     def height(self)->int:
-        return self.__height
+        return self.__config.height
 
     def __get_random_x(self)->int:
         return randrange(self.width())
@@ -119,16 +122,24 @@ class GameBoard:
     def __get_random_y(self)->int:
         return randrange(self.height())
 
+class GameEngineConfiguration:
+    scale = 1
+    frame_rate = 24
+
 class GameEngine:
-    def __init__(self, scale, matrix: Matrix, frame_rate):
-        width = self._calculate_game_board_width(matrix.config.overall_led_width, scale)
-        height = self._calculate_game_board_height(matrix.config.overall_led_height, scale)
-        self.board = GameBoard(width, height, scale, matrix, self._colour_cell_func)
+    def __init__(self, config, matrix: Matrix):
+        board_config = GameBoardConfiguration()
+        board_config.width = self._calculate_game_board_width(matrix.config.overall_led_width, config.scale)
+        board_config.height = self._calculate_game_board_height(matrix.config.overall_led_height, config.scale)
+        board_config.scale = config.scale
+        board_config.cell_colour_func = self._colour_cell_func
+        self.board = GameBoard(board_config, matrix)
+
+        self.config = config
         self.__thread = None
         self.__command_queue = queue.Queue()
         self.__paused = False
         self.__step_forward = False
-        self.__frame_rate = frame_rate
         self.__update_frame_duration_from_rate()
 
     def _calculate_game_board_width(self, led_cols, scale):
@@ -141,7 +152,7 @@ class GameEngine:
         pass
 
     def __update_frame_duration_from_rate(self):
-        self.__frame_duration_ns = 1 / self.__frame_rate * 1000000000
+        self.__frame_duration_ns = 1 / self.config.frame_rate * 1000000000
 
     def reset(self):
         pass
@@ -162,10 +173,10 @@ class GameEngine:
                 if command == Command.STEP_FORWARD:
                     self.__step_forward = True
                 if command == Command.FRAMERATE_UP:
-                    self.__frame_rate = self.__frame_rate + 1
+                    self.config.frame_rate = self.config.frame_rate + 1
                     self.__update_frame_duration_from_rate()
                 if command == Command.FRAMERATE_DOWN:
-                    self.__frame_rate = max(self.__frame_rate - 1, 1)
+                    self.config.frame_rate = max(self.config.frame_rate - 1, 1)
                     self.__update_frame_duration_from_rate()
                 if command == Command.RESET:
                     self.reset()
@@ -265,6 +276,5 @@ class GameScreen(Screen):
         self._engine.board.matrix.finish_canvas()
 
 class VectorGameEngine(GameEngine):
-    def __init__(self, scale, matrix: Matrix, frame_rate):
-        super().__init__(scale, matrix, frame_rate)
-
+    def __init__(self, config:GameEngineConfiguration, matrix: Matrix):
+        super().__init__(config, matrix)

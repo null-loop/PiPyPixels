@@ -5,7 +5,7 @@ from typing import List
 
 from PIL import ImageColor
 
-from pipypixels.games.shared import GameEntity, GameBoard, GameEngine, GameScreen
+from pipypixels.games.shared import GameEntity, GameBoard, GameEngine, GameScreen, GameEngineConfiguration
 from pipypixels.graphics.shared import Matrix
 
 
@@ -109,7 +109,7 @@ class Snake:
             self.__move_head(new_head_position)
 
             new_length = len(self.__parts)
-            if new_length == self.__length_to_split:
+            if new_length >= self.__length_to_split:
                 return SnakeTurnResult.SPLIT
 
             return SnakeTurnResult.ATE
@@ -213,14 +213,19 @@ class Snake:
         position[0] = self.__overflow_x(position[0])
         position[1] = self.__overflow_y(position[1])
 
+class SnakeEngineConfiguration(GameEngineConfiguration):
+    snake_count = 10
+    food_count = 100
+    reproduce_size = 40
+
 class SnakeEngine(GameEngine):
-    def __init__(self, scale, matrix: Matrix, frame_rate):
-        super().__init__(scale, matrix, frame_rate)
+    def __init__(self, config:SnakeEngineConfiguration, matrix: Matrix):
+        super().__init__(config, matrix)
         self.__snakes = []
 
     def starting_spawn(self):
-        self.__spawn_foods(100)
-        self.__spawn_snakes(10)
+        self.__spawn_foods(self.config.food_count)
+        self.__spawn_snakes(self.config.snake_count)
 
     def __spawn_foods(self, count:int):
         if count != 0:
@@ -256,8 +261,8 @@ class SnakeEngine(GameEngine):
                 self.__snakes.remove(snake)
 
         self.__spawn_foods(food_to_spawn)
-        if len(self.__snakes) < 100:
-            self.__spawn_snakes(100 - len(self.__snakes))
+        if len(self.__snakes) < self.config.snake_count:
+            self.__spawn_snakes(self.config.snake_count - len(self.__snakes))
 
     def reset(self):
         self.board.reset()

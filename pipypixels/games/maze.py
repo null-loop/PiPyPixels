@@ -4,7 +4,7 @@ import time
 from enum import Enum
 from random import choice, randrange
 
-from pipypixels.games.shared import GameEntity, GameBoard, GameEngine, GameScreen
+from pipypixels.games.shared import GameEntity, GameBoard, GameEngine, GameScreen, GameEngineConfiguration
 from pipypixels.graphics.shared import Matrix
 
 
@@ -70,8 +70,8 @@ class MazeGenerator:
                 self.__visit(next_x, next_y)
 
 class MazeEngine(GameEngine):
-    def __init__(self, scale, matrix: Matrix, frame_rate):
-        super().__init__(scale, matrix, frame_rate)
+    def __init__(self, config:GameEngineConfiguration, matrix: Matrix):
+        super().__init__(config, matrix)
         self.__maze_entrance = ()
         self.__maze_exit = ()
         self.__trail = []
@@ -195,6 +195,7 @@ class MazeEngine(GameEngine):
 class MazeScreen(GameScreen):
     def __init__(self, matrix: Matrix):
         super().__init__(matrix, self.__get_engine, redraw_on_show=False)
+        self.config = GameEngineConfiguration()
 
     def __get_engine(self) ->GameEngine:
-        return MazeEngine(self._scale, self._matrix, 256)
+        return MazeEngine(self.config, self._matrix)

@@ -6,8 +6,13 @@ from PIL import ImageColor
 from pipypixels.games.shared import GameEntity, GameEngine, GameScreen
 from pipypixels.graphics.shared import Matrix
 
+class GameOfLifeEngineConfiguration:
+    initial_pattern = "Random"
 
 class GameOfLifeEngine(GameEngine):
+
+    def __init__(self, config:GameOfLifeEngineConfiguration, matrix: Matrix):
+        super().__init__(config, matrix)
 
     def _colour_cell_func(self, x, y, entity_type:GameEntity):
         colour = ImageColor.getrgb("Black")
@@ -50,6 +55,7 @@ class GameOfLifeEngine(GameEngine):
 class GameOfLifeScreen(GameScreen):
     def __init__(self, matrix: Matrix):
         super().__init__(matrix, self.__get_engine, redraw_on_show=False)
+        self.config = GameOfLifeEngineConfiguration()
 
     def __get_engine(self) ->GameEngine:
-        return GameOfLifeEngine(self._scale, self._matrix, 24)
+        return GameOfLifeEngine(self.config, self._matrix)

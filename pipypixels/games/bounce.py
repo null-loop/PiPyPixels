@@ -1,24 +1,27 @@
 import math
 from random import randrange
 
-from pipypixels.games.shared import VectorGameEngine, GameScreen, GameEngine, GameEntity
+from pipypixels.games.shared import VectorGameEngine, GameScreen, GameEngine, GameEntity, GameEngineConfiguration
 from pipypixels.graphics.shared import Matrix
 
+class BounceEngineConfiguration(GameEngineConfiguration):
+    velocity = 0.5
+    ball_count = 100
 
 class BounceEngine(VectorGameEngine):
-    def __init__(self, scale, matrix: Matrix, frame_rate):
-        super().__init__(scale, matrix, frame_rate)
+    def __init__(self, config:BounceEngineConfiguration, matrix: Matrix):
+        super().__init__(config, matrix)
         self.__balls = []
 
     def reset(self):
         self.board.reset()
         self.__balls.clear()
         self.__draw_walls()
-        self.__spawn_balls(100)
+        self.__spawn_balls(self.config.ball_count)
 
     def __spawn_balls(self, count:int):
         for _ in range(count):
-            ball = (self.board.get_random_empty_position(),(randrange(0,180) - 90,0.6),(randrange(100,250),0,160))
+            ball = (self.board.get_random_empty_position(),(randrange(0,180) - 90,self.config.velocity),(randrange(100,250),0,160))
             self.__balls.append(ball)
 
     def __clear_ball(self, position:(float,float)):
@@ -106,9 +109,10 @@ class BounceEngine(VectorGameEngine):
 class BounceScreen(GameScreen):
     def __init__(self, matrix: Matrix):
         super().__init__(matrix, self.__get_engine, redraw_on_show=True)
+        self.config = BounceEngineConfiguration()
 
     def __get_engine(self) ->GameEngine:
-        return BounceEngine(self._scale, self._matrix, 60)
+        return BounceEngine(self.config, self._matrix)
 
     def redraw(self):
         self._engine.board.matrix.start_new_canvas()
