@@ -40,11 +40,17 @@ class FakeMatrix(Matrix):
         self.__pixels[x][y] = (r,g,b)
 
     def save_matrix_as_image(self, file_path):
-        image = Image.new('RGB', (self.config.overall_led_width, self.config.overall_led_height))
+        pixel_size = 6
+        image = Image.new('RGB', (self.config.overall_led_width * pixel_size, self.config.overall_led_height * pixel_size))
         draw = ImageDraw.Draw(image)
         for x in range(self.config.overall_led_width):
             for y in range(self.config.overall_led_height):
-                draw.point((x,y),self.__pixels[x][y])
+                t_x = x * pixel_size
+                t_y = y * pixel_size
+                draw.rectangle((t_x,t_y,t_x + pixel_size,t_y + pixel_size),fill=(0,0,0))
+                colour = self.__pixels[x][y]
+                safe_colour = (int(colour[0]),int(colour[1]),int(colour[2]))
+                draw.rectangle((t_x + 1, t_y + 1, t_x + pixel_size - 2, t_y + pixel_size - 2), fill=safe_colour)
         image.save(file_path, 'png')
 
     def create_pixels(self):
