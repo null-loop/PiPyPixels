@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, ImageDraw
 from numpy import asarray
 import dearpygui.dearpygui as dpg
 
@@ -15,6 +15,7 @@ class FakeMatrix(Matrix):
         self.panel_height = config.overall_led_height * self.__led_size
 
         self.__created_pixels = False
+        self.__pixels = []
 
     def start_new_canvas(self):
         self.__ensure_pixels_created()
@@ -36,10 +37,21 @@ class FakeMatrix(Matrix):
         self.__ensure_pixels_created()
         tag = 'pixel_' + str(x) + '_' + str(y)
         dpg.configure_item(tag, fill=(r,g,b,int(255*self.__brightness/100)))
+        self.__pixels[x][y] = (r,g,b)
+
+    def save_matrix_as_image(self, file_path):
+        image = Image.new('RGB', (self.config.overall_led_width, self.config.overall_led_height))
+        draw = ImageDraw.Draw(image)
+        for x in range(self.config.overall_led_width):
+            for y in range(self.config.overall_led_height):
+                draw.point((x,y),self.__pixels[x][y])
+        image.save(file_path, 'png')
 
     def create_pixels(self):
         self.__created_pixels = True
         for x in range(self.config.overall_led_width):
+            col = []
+            self.__pixels.append(col)
             for y in range(self.config.overall_led_height):
                 t_x = x * self.__led_size
                 t_y = y * self.__led_size
@@ -47,6 +59,7 @@ class FakeMatrix(Matrix):
                 p_max = (t_x + self.__led_size, t_y + self.__led_size)
                 tag = 'pixel_' + str(x) + '_' + str(y)
                 dpg.draw_rectangle(p_min, p_max, color=(0, 0, 0), thickness=0, fill=(0,0,0), parent='LED_PANEL', tag=tag)
+                col.append((0,0,0))
 
     def render_image(self, image: Image):
         data = asarray(image)
