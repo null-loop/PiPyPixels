@@ -1,7 +1,6 @@
 import queue
 import threading
 import time
-from random import randrange
 
 from PIL import Image
 
@@ -111,7 +110,7 @@ class ImageScreen(Screen):
 class StartupImageScreen(ImageScreen):
     def __init__(self, matrix: Matrix):
         super().__init__(1, matrix)
-        self.__time_to_move_on = time.time() + 4
+        self.__time_to_move_on = time.time() + 2
 
     def _render_image(self) ->Image:
         if time.time() > self.__time_to_move_on:
@@ -194,7 +193,10 @@ class ScreenController:
                     self.__current_screen.hide_and_wait()
                     self.__current_screen.receive_command(Command.EXIT)
                     self.__screens.remove(self.__current_screen)
-                    self.__set_screen_by_index(0)
+                    if self.__current_screen_index >= len(self.__screens):
+                        self.__current_screen_index = len(self.__screens) - 1
+                    self.__set_screen_by_index(self.__current_screen_index)
+
                 else:
                     self.__current_screen.receive_command(command)
             time.sleep(1/100)
