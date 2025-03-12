@@ -23,7 +23,7 @@ controller.add_screen(BounceScreen(matrix))
 controller.add_screen(SnakeScreen(matrix))
 controller.add_screen(MazeScreen(matrix))
 controller.add_screen(GameOfLifeScreen(matrix))
-command_source = UICommandSource(controller)
+command_source = UICommandSource(controller, matrix)
 
 dpg.create_context()
 

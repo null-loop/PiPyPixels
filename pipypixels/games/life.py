@@ -1,8 +1,6 @@
 import math
 import random
 
-from PIL import ImageColor
-
 from pipypixels.games.shared import GameEntity, GameEngine, GameScreen
 from pipypixels.graphics.shared import Matrix
 
@@ -10,7 +8,7 @@ from pipypixels.graphics.shared import Matrix
 class GameOfLifeEngine(GameEngine):
 
     def _colour_cell_func(self, x, y, entity_type:GameEntity):
-        colour = ImageColor.getrgb("Black")
+        colour = (0,0,0)
         if entity_type == GameEntity.CELL:
             r = (x / self.board.width()) * 256
             b = (y / self.board.height()) * 256
