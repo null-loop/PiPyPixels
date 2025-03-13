@@ -11,3 +11,9 @@ cd PiPyPixels
 bin/pip install -r pi-requirements.txt
 bin/python3 pi.py
 ```
+
+## Running at startup
+
+Run: `crontab -e` to add a new entry of:
+
+`@reboot /root/PiPyPixels/scripts/startup.sh`
