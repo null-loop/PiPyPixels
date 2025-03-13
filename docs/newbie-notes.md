@@ -1,6 +1,9 @@
 ## Getting Started
 
+Instructions from a fresh, minimal diet-pi install.
+
 ```
+sudo apt-get install git && sudo apt-get install python3-dev && sudo apt-get install python3.11-venv
 git clone https://github.com/null-loop/PiPyPixels.git PiPyPixels
 python3 -m venv PiPyPixels
 cd PiPyPixels
