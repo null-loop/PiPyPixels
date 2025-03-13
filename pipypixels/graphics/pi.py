@@ -52,7 +52,7 @@ class ScreenMatrix(Matrix):
             self.__next_canvas.SetImage(rgb)
         else:
             canvas = self.__matrix.CreateFrameCanvas()
-            canvas.SetImage(rgb)
+            canvas.SetImage(rgb, unsafe=False)
             self.__matrix.SwapOnVSync(canvas)
 
     def set_pixel(self, x, y, r, g, b):
