@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 pushd .. >> dev/null
 # TODO:Get the python version to use when copying later on...
