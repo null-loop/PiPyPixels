@@ -14,7 +14,7 @@ from pipypixels.screens import ScreenController, StartupImageScreen, ArtImageScr
 config = MatrixConfiguration()
 matrix = ScreenMatrix(config)
 controller = ScreenController(matrix)
-#controller.add_screen(StartupImageScreen(matrix))
+controller.add_screen(StartupImageScreen(matrix))
 controller.add_screen(ArtImageScreen(matrix))
 controller.add_screen(BounceScreen(matrix))
 controller.add_screen(SnakeScreen(matrix))
