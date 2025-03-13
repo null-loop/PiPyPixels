@@ -7,7 +7,7 @@ class MatrixConfiguration:
     overall_led_height = 128
     overall_led_width = 128
     hardware_mapping = 'adafruit-hat-pwm'
-    gpio_slowdown = 5
+    gpio_slowdown = 4
     limit_refresh_rate_hz = 0
     brightness = 50
     disable_hardware_pulsing = False
