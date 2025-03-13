@@ -10,7 +10,7 @@ class MatrixConfiguration:
     gpio_slowdown = 5
     limit_refresh_rate_hz = 0
     brightness = 50
-    disable_hardware_pulsing = True
+    disable_hardware_pulsing = False
     drop_privileges = False
 
 class Matrix:
