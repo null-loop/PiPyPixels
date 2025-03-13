@@ -4,6 +4,7 @@
 git clone https://github.com/null-loop/PiPyPixels.git PiPyPixels
 python3 -m venv PiPyPixels
 cd PiPyPixels
+./scripts/build-rgb-driver.sh
 bin/pip install -r pi-requirements.txt
 bin/python3 pi.py
 ```
