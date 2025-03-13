@@ -56,7 +56,7 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [ ] Configurable remote scan code to command mapping
 * [ ] Local setup script?
 * [ ] Script / CLI tool for capturing scan codes to config
-* [ ] Re-setup from scratch on a new diet-pi image - document the whole process, reset when it goes wrong and get the docs right!
+* [x] Re-setup from scratch on a new diet-pi image - document the whole process, reset when it goes wrong and get the docs right!
 
 ## Far Future - Cube Layout
 
