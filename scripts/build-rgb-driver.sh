@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 pushd .. >> dev/null
 # TODO:Get the python version to use when copying later on...
 git checkout https://github.com/hzeller/rpi-rgb-led-matrix.git rpi-rgb-led-matrix
