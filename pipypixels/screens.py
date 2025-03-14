@@ -178,9 +178,15 @@ class ScreenController:
                         screen.receive_command(command)
                     return
                 if command == Command.PREVIOUS:
-                    self.__previous_screen()
+                    if type(self.__current_screen) == StartupImageScreen:
+                        self.receive_command(Command.PREV_AND_REMOVE)
+                    else:
+                        self.__previous_screen()
                 elif command == Command.NEXT:
-                    self.__next_screen()
+                    if type(self.__current_screen) == StartupImageScreen:
+                        self.receive_command(Command.NEXT_AND_REMOVE)
+                    else:
+                        self.__next_screen()
                 elif command == Command.BRIGHTNESS_UP:
                     if self.__matrix.increase_brightness():
                         self.__current_screen.redraw()
@@ -194,6 +200,13 @@ class ScreenController:
                     self.__current_screen.receive_command(Command.EXIT)
                     self.__screens.remove(self.__current_screen)
                     if self.__current_screen_index >= len(self.__screens):
+                        self.__current_screen_index = 0
+                    self.__set_screen_by_index(self.__current_screen_index)
+                elif command == Command.PREV_AND_REMOVE:
+                    self.__current_screen.hide_and_wait()
+                    self.__current_screen.receive_command(Command.EXIT)
+                    self.__screens.remove(self.__current_screen)
+                    if self.__current_screen_index == 0:
                         self.__current_screen_index = len(self.__screens) - 1
                     self.__set_screen_by_index(self.__current_screen_index)
 
@@ -219,8 +232,9 @@ class ScreenController:
     def __remove_startup_screen_if_present(self):
         for i in range(len(self.__screens)):
             screen = self.__screens[i]
-            if type(screen) == type(StartupImageScreen):
+            if type(screen) == StartupImageScreen:
                 self.__screens.remove(screen)
+                return
 
     def __next_screen(self):
         n = self.__current_screen_index + 1

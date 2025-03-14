@@ -2,12 +2,12 @@ import sys
 import time
 
 from pipypixels.controls.shared import Command
-from pipypixels.graphics.pi import ScreenMatrix
+from pipypixels.graphics.pi import LEDMatrix
 from pipypixels.graphics.shared import MatrixConfiguration
 from pipypixels.screens import StartupImageScreen
 
 config = MatrixConfiguration()
-matrix = ScreenMatrix(config)
+matrix = LEDMatrix(config)
 screen = StartupImageScreen(matrix)
 try:
     print("Press CTRL-C to stop.")
