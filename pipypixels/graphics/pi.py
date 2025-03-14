@@ -25,14 +25,16 @@ class ScreenMatrix(Matrix):
         self.__options.disable_hardware_pulsing = config.disable_hardware_pulsing
         self.__options.drop_privileges = config.drop_privileges
         self.__matrix = RGBMatrix(options=self.__options)
-        self.__next_canvas = None
+        self.__next_canvas = self.__matrix.CreateFrameCanvas()
+        self.__draw_on_canvas = False
 
     def start_new_canvas(self):
-        self.__next_canvas = self.__matrix.CreateFrameCanvas()
+        self.__draw_on_canvas = True
 
     def finish_canvas(self):
-        self.__matrix.SwapOnVSync(self.__next_canvas)
-        self.__next_canvas = None
+        self.__next_canvas = self.__matrix.SwapOnVSync(self.__next_canvas)
+        self.__next_canvas.Clear()
+        self.__draw_on_canvas = False
 
     def render_image(self, image: Image):
         if self.__panel_rows > 1:
@@ -48,12 +50,13 @@ class ScreenMatrix(Matrix):
         else:
             rgb = image.convert('RGB')
 
-        if self.__next_canvas is not None:
-            self.__next_canvas.SetImage(rgb)
+
+        if self.__draw_on_canvas:
+            self.__next_canvas.SetImage(rgb, unsafe=False)
         else:
-            canvas = self.__matrix.CreateFrameCanvas()
-            canvas.SetImage(rgb, unsafe=False)
-            self.__matrix.SwapOnVSync(canvas)
+            self.__next_canvas.SetImage(rgb, unsafe=False)
+            self.__next_canvas = self.__matrix.SwapOnVSync(self.__next_canvas)
+            self.__next_canvas.Clear()
 
     def set_pixel(self, x, y, r, g, b):
         t_x = x
@@ -62,7 +65,7 @@ class ScreenMatrix(Matrix):
             if t_y >= self.config.panel_led_height:
                 t_x = t_x + self.config.overall_led_width
                 t_y = t_y - self.config.panel_led_height
-        if self.__next_canvas is not None:
+        if self.__draw_on_canvas:
             self.__next_canvas.SetPixel(t_x, t_y, r, g, b)
         else:
             self.__matrix.SetPixel(t_x, t_y, r, g, b)
