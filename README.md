@@ -58,18 +58,6 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [ ] Script / CLI tool for capturing scan codes to config
 * [x] Re-setup from scratch on a new diet-pi image - document the whole process, reset when it goes wrong and get the docs right!
 
-## Far Future - Cube Layout
-
-* Can we drive a fifth panel?
-* Design frame
-  * expose PI ports, sit at bottom, 
-  * cable management
-  * magnetic mounting (inner metal plate), allows panel removal (requires sufficient length in cabling)
-  * POWER! Need a single power source
-* Different GameBoard
-* Images render on each panel, carousel?
-  * Radical change to the screen concept...
-
 ## Attribution
 
 * [RGB LED Driver](https://github.com/hzeller/rpi-rgb-led-matrix) - Obvs.
