@@ -6,6 +6,7 @@ class MatrixConfiguration:
     panel_led_width = 64
     overall_led_height = 128
     overall_led_width = 128
+    led_pixel_mapper = 'U-mapper'
     hardware_mapping = 'adafruit-hat-pwm'
     gpio_slowdown = 5
     limit_refresh_rate_hz = 0
