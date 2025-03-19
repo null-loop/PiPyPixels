@@ -14,7 +14,7 @@ class LEDMatrix(Matrix):
         self.__options.rows = config.panel_led_height
         self.__options.cols = config.panel_led_width
         self.__options.parallel = 1
-        self.__options.led_pixel_mapper = config.led_pixel_mapper
+        self.__options.pixel_mapper_config = config.pixel_mapper_config
         self.__options.hardware_mapping = config.hardware_mapping
         self.__options.gpio_slowdown = config.gpio_slowdown
         self.__options.limit_refresh_rate_hz = config.limit_refresh_rate_hz
