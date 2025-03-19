@@ -18,7 +18,7 @@ options.disable_hardware_pulsing = False
 options.drop_privileges = False
 matrix = RGBMatrix(options=options)
 
-image = Image.open('./assets/five-panel-test.png')
+image = Image.open('./assets/img.png')
 rgb = image.convert('RGB')
 matrix.SetImage(rgb, unsafe=False)
 
