@@ -9,7 +9,7 @@ class LEDMatrix(Matrix):
     def __init__(self, config:MatrixConfiguration):
         super().__init__(config)
         self.__options = RGBMatrixOptions()
-        self.__options.chain_length = ((config.overall_led_height * config.panel_led_height) /
+        self.__options.chain_length = ((config.overall_led_height * config.overall_led_width) /
                                        (config.panel_led_width * config.panel_led_height))
         self.__options.rows = config.panel_led_height
         self.__options.cols = config.panel_led_width
