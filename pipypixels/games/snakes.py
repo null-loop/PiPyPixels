@@ -281,7 +281,7 @@ class SnakeEngine(GameEngine):
     def _handle_command(self, command:Command):
         if command == Command.PRESET_1:
             self.__snake_count = 1
-            self.__food_count = 100
+            self.__food_count = 200
             self.__split_on_length = 1000
             self.reset()
         elif command == Command.PRESET_2:
