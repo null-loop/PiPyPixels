@@ -27,6 +27,7 @@ class SnakeTraits:
         self.food_weight = float(2)
         self.wall_weight = float(-1.1)
         self.snake_weight = float(-1.1)
+        self.length_to_split = 30
 
     def mutate(self):
         trait = randrange(3)
@@ -43,9 +44,10 @@ class SnakeTraits:
 class Snake:
 
     @classmethod
-    def spawn_new_snake(cls, x, y, board):
+    def spawn_new_snake(cls, x, y, board, length_to_split: int):
         colour = [randrange(235) + 20,randrange(235) + 20,randrange(235) + 20]
         traits = SnakeTraits()
+        traits.length_to_split = length_to_split
         return Snake([[x,y]], traits, colour, board)
 
     @classmethod
@@ -54,6 +56,7 @@ class Snake:
         traits.snake_weight = parent_traits.snake_weight
         traits.food_weight = parent_traits.food_weight
         traits.wall_weight = parent_traits.wall_weight
+        traits.length_to_split = parent_traits.length_to_split
 
         return Snake(new_parts, traits, colour, board)
 
@@ -74,7 +77,7 @@ class Snake:
         self.__parts = parts.copy()
         self.__board = board
         self.__colour = colour
-        self.__length_to_split = 30
+        self.__length_to_split = traits.length_to_split
         self.redraw_on_board()
 
     def redraw_on_board(self):
@@ -219,7 +222,8 @@ class SnakeEngine(GameEngine):
         super().__init__(scale, matrix, frame_rate)
         self.__snakes = []
         self.__food_count = 100
-        self.__snake_count = 10
+        self.__snake_count = 20
+        self.__split_on_length = 30
 
     def starting_spawn(self):
         self.__spawn_foods(self.__food_count)
@@ -235,7 +239,7 @@ class SnakeEngine(GameEngine):
         if count != 0:
             for i in range(count):
                 pos = self.board.get_random_empty_position()
-                snake = Snake.spawn_new_snake(pos[0], pos[1], self.board)
+                snake = Snake.spawn_new_snake(pos[0], pos[1], self.board, self.__split_on_length)
                 self.__snakes.append(snake)
 
     def _colour_cell_func(self, x, y, entity_type):
@@ -278,14 +282,17 @@ class SnakeEngine(GameEngine):
         if command == Command.PRESET_1:
             self.__snake_count = 1
             self.__food_count = 100
+            self.__split_on_length = 1000
             self.reset()
         elif command == Command.PRESET_2:
             self.__snake_count = 10
             self.__food_count = 50
+            self.__split_on_length = 100
             self.reset()
         elif command == Command.PRESET_3:
             self.__snake_count = 100
             self.__food_count = 20
+            self.__split_on_length = 30
             self.reset()
 
 class SnakeScreen(GameScreen):
