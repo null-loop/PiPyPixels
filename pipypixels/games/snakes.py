@@ -278,13 +278,15 @@ class SnakeEngine(GameEngine):
         if command == Command.PRESET_1:
             self.__snake_count = 1
             self.__food_count = 100
+            self.reset()
         elif command == Command.PRESET_2:
             self.__snake_count = 10
             self.__food_count = 50
+            self.reset()
         elif command == Command.PRESET_3:
             self.__snake_count = 100
             self.__food_count = 20
-        self.reset()
+            self.reset()
 
 class SnakeScreen(GameScreen):
     def __init__(self, matrix: Matrix):

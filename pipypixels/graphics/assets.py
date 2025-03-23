@@ -15,10 +15,19 @@ logo_64_by_64 = Image.open('./assets/logo-64-by-64.png')
 logo_32_by_32 = Image.open('./assets/logo-32-by-32.png')
 
 __art_path = './assets/art'
+__life_presets_path = './assets/life-presets'
 
 artwork = []
+life_presets = {}
 
-for f in listdir('./assets/art'):
+for f in listdir(__art_path):
     fp = join(__art_path, f)
     if isfile(fp):
         artwork.append(Image.open(fp))
+        print(f'{f}')
+
+for f in listdir(__life_presets_path):
+    fp = join(__life_presets_path, f)
+    if isfile(fp):
+        life_presets[f] = Image.open(fp)
+        print(f'{f}')
