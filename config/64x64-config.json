@@ -8,7 +8,7 @@
     "gpio_slowdown": 1,
     "limit_refresh_rate_hz": 0,
     "brightness": 100,
-    "disable_hardware_pulsing": "False",
-    "drop_privileges": "False"
+    "disable_hardware_pulsing": false,
+    "drop_privileges": false
   }
 }
