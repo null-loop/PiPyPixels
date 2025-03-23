@@ -5,7 +5,7 @@ from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from pipypixels.graphics.shared import MatrixConfiguration, Matrix
 
 
-class ScreenMatrix(Matrix):
+class LEDMatrix(Matrix):
     def __init__(self, config:MatrixConfiguration):
         super().__init__(config)
         self.__options = RGBMatrixOptions()
@@ -49,7 +49,6 @@ class ScreenMatrix(Matrix):
             rgb = stitched.convert('RGB')
         else:
             rgb = image.convert('RGB')
-
 
         if self.__draw_on_canvas:
             self.__next_canvas.SetImage(rgb, unsafe=False)

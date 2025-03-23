@@ -7,12 +7,12 @@ from pipypixels.games.bounce import BounceScreen
 from pipypixels.games.life import GameOfLifeScreen
 from pipypixels.games.maze import MazeScreen
 from pipypixels.games.snakes import SnakeScreen
-from pipypixels.graphics.pi import ScreenMatrix
+from pipypixels.graphics.pi import LEDMatrix
 from pipypixels.graphics.shared import MatrixConfiguration
 from pipypixels.screens import ScreenController, StartupImageScreen, ArtImageScreen
 
 config = MatrixConfiguration()
-matrix = ScreenMatrix(config)
+matrix = LEDMatrix(config)
 controller = ScreenController(matrix)
 controller.add_screen(StartupImageScreen(matrix))
 controller.add_screen(ArtImageScreen(matrix))

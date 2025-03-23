@@ -29,4 +29,5 @@ class Command(IntEnum):
     PRESET_9 = 108
     PRESET_10 = 109
     NEXT_AND_REMOVE = 200
+    PREV_AND_REMOVE = 201
     EXIT = 999
