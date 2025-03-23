@@ -197,4 +197,4 @@ class MazeScreen(GameScreen):
         super().__init__(matrix, self.__get_engine, redraw_on_show=False)
 
     def __get_engine(self) ->GameEngine:
-        return MazeEngine(self._scale, self._matrix, 256)
+        return MazeEngine(self._scale, self._matrix, 24)
