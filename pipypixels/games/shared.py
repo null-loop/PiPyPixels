@@ -146,6 +146,9 @@ class GameEngine:
     def reset(self):
         pass
 
+    def _handle_command(self, command:Command):
+        pass
+
     def __game_loop(self):
         while True:
             frame_start = time.time_ns()
@@ -153,22 +156,24 @@ class GameEngine:
                 command = self.__command_queue.get()
                 if command == Command.EXIT:
                     return
-                if command == Command.PAUSE_PLAY:
+                elif command == Command.PAUSE_PLAY:
                     self.__paused = not self.__paused
-                if command == Command.PLAY:
+                elif command == Command.PLAY:
                     self.__paused = False
-                if command == Command.PAUSE:
+                elif command == Command.PAUSE:
                     self.__paused = True
-                if command == Command.STEP_FORWARD:
+                elif command == Command.STEP_FORWARD:
                     self.__step_forward = True
-                if command == Command.FRAME_RATE_UP:
+                elif command == Command.FRAME_RATE_UP:
                     self.__frame_rate = self.__frame_rate + 1
                     self.__update_frame_duration_from_rate()
-                if command == Command.FRAME_RATE_DOWN:
+                elif command == Command.FRAME_RATE_DOWN:
                     self.__frame_rate = max(self.__frame_rate - 1, 1)
                     self.__update_frame_duration_from_rate()
-                if command == Command.RESET:
+                elif command == Command.RESET:
                     self.reset()
+                else:
+                    self._handle_command(command)
             if not self.__paused or self.__step_forward:
                 self.__step_forward = False
                 self._game_tick()

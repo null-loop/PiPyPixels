@@ -5,6 +5,7 @@ from typing import List
 
 from PIL import ImageColor
 
+from pipypixels.controls.shared import Command
 from pipypixels.games.shared import GameEntity, GameBoard, GameEngine, GameScreen
 from pipypixels.graphics.shared import Matrix
 
@@ -26,6 +27,7 @@ class SnakeTraits:
         self.food_weight = float(2)
         self.wall_weight = float(-1.1)
         self.snake_weight = float(-1.1)
+        self.length_to_split = 30
 
     def mutate(self):
         trait = randrange(3)
@@ -42,9 +44,10 @@ class SnakeTraits:
 class Snake:
 
     @classmethod
-    def spawn_new_snake(cls, x, y, board):
+    def spawn_new_snake(cls, x, y, board, length_to_split: int):
         colour = [randrange(235) + 20,randrange(235) + 20,randrange(235) + 20]
         traits = SnakeTraits()
+        traits.length_to_split = length_to_split
         return Snake([[x,y]], traits, colour, board)
 
     @classmethod
@@ -53,6 +56,7 @@ class Snake:
         traits.snake_weight = parent_traits.snake_weight
         traits.food_weight = parent_traits.food_weight
         traits.wall_weight = parent_traits.wall_weight
+        traits.length_to_split = parent_traits.length_to_split
 
         return Snake(new_parts, traits, colour, board)
 
@@ -73,7 +77,7 @@ class Snake:
         self.__parts = parts.copy()
         self.__board = board
         self.__colour = colour
-        self.__length_to_split = 30
+        self.__length_to_split = traits.length_to_split
         self.redraw_on_board()
 
     def redraw_on_board(self):
@@ -217,10 +221,13 @@ class SnakeEngine(GameEngine):
     def __init__(self, scale, matrix: Matrix, frame_rate):
         super().__init__(scale, matrix, frame_rate)
         self.__snakes = []
+        self.__food_count = 100
+        self.__snake_count = 20
+        self.__split_on_length = 30
 
     def starting_spawn(self):
-        self.__spawn_foods(100)
-        self.__spawn_snakes(10)
+        self.__spawn_foods(self.__food_count)
+        self.__spawn_snakes(self.__snake_count)
 
     def __spawn_foods(self, count:int):
         if count != 0:
@@ -232,14 +239,14 @@ class SnakeEngine(GameEngine):
         if count != 0:
             for i in range(count):
                 pos = self.board.get_random_empty_position()
-                snake = Snake.spawn_new_snake(pos[0], pos[1], self.board)
+                snake = Snake.spawn_new_snake(pos[0], pos[1], self.board, self.__split_on_length)
                 self.__snakes.append(snake)
 
     def _colour_cell_func(self, x, y, entity_type):
         colour = (0,0,0)
-        if entity_type == GameEntity.SNAKE: colour = ImageColor.getrgb("Green")
-        if entity_type == GameEntity.FOOD: colour = ImageColor.getrgb("Yellow")
-        if entity_type == GameEntity.WALL: colour = ImageColor.getrgb("Red")
+        if entity_type == GameEntity.SNAKE: colour = (0,255,0)
+        if entity_type == GameEntity.FOOD: colour = (255,255,255)
+        if entity_type == GameEntity.WALL: colour = (255,0,0)
         return colour
 
     def _game_tick(self):
@@ -256,8 +263,8 @@ class SnakeEngine(GameEngine):
                 self.__snakes.remove(snake)
 
         self.__spawn_foods(food_to_spawn)
-        if len(self.__snakes) < 100:
-            self.__spawn_snakes(100 - len(self.__snakes))
+        if len(self.__snakes) < self.__snake_count:
+            self.__spawn_snakes(self.__snake_count - len(self.__snakes))
 
     def reset(self):
         self.board.reset()
@@ -271,12 +278,29 @@ class SnakeEngine(GameEngine):
     def reset_on_play(self):
         return False
 
+    def _handle_command(self, command:Command):
+        if command == Command.PRESET_1:
+            self.__snake_count = 1
+            self.__food_count = 200
+            self.__split_on_length = 1000
+            self.reset()
+        elif command == Command.PRESET_2:
+            self.__snake_count = 10
+            self.__food_count = 50
+            self.__split_on_length = 100
+            self.reset()
+        elif command == Command.PRESET_3:
+            self.__snake_count = 100
+            self.__food_count = 20
+            self.__split_on_length = 30
+            self.reset()
+
 class SnakeScreen(GameScreen):
     def __init__(self, matrix: Matrix):
         super().__init__(matrix, self.__get_engine, redraw_on_show=True)
 
     def __get_engine(self) -> GameEngine:
-        return SnakeEngine(self._scale, self._matrix, 256)
+        return SnakeEngine(self._scale, self._matrix, 32)
 
     def redraw(self):
         self._engine.board.matrix.start_new_canvas()

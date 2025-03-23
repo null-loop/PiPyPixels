@@ -11,7 +11,7 @@ from pipypixels.graphics.pi import LEDMatrix
 from pipypixels.graphics.shared import MatrixConfiguration
 from pipypixels.screens import ScreenController, StartupImageScreen, ArtImageScreen
 
-config = MatrixConfiguration()
+config = MatrixConfiguration.load('config/config.json')
 matrix = LEDMatrix(config)
 controller = ScreenController(matrix)
 controller.add_screen(StartupImageScreen(matrix))

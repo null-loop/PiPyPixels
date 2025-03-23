@@ -55,6 +55,36 @@ class UICommandSource:
     def __screenshot_save(self, sender, app_data):
         self.__matrix.save_matrix_as_image(app_data['file_path_name'] + '.png')
 
+    def __preset_1(self, sender, app_data):
+        self.__screen_controller.receive_command(Command.PRESET_1)
+
+    def __preset_2(self, sender, app_data):
+        self.__screen_controller.receive_command(Command.PRESET_2)
+
+    def __preset_3(self, sender, app_data):
+        self.__screen_controller.receive_command(Command.PRESET_3)
+
+    def __preset_4(self, sender, app_data):
+        self.__screen_controller.receive_command(Command.PRESET_4)
+
+    def __preset_5(self, sender, app_data):
+        self.__screen_controller.receive_command(Command.PRESET_5)
+
+    def __preset_6(self, sender, app_data):
+        self.__screen_controller.receive_command(Command.PRESET_6)
+
+    def __preset_7(self, sender, app_data):
+        self.__screen_controller.receive_command(Command.PRESET_7)
+
+    def __preset_8(self, sender, app_data):
+        self.__screen_controller.receive_command(Command.PRESET_8)
+
+    def __preset_9(self, sender, app_data):
+        self.__screen_controller.receive_command(Command.PRESET_9)
+
+    def __preset_10(self, sender, app_data):
+        self.__screen_controller.receive_command(Command.PRESET_10)
+
     def create_buttons(self):
         dpg.add_file_dialog(tag='file_dialog', show=False, callback=self.__screenshot_save, width=600, height=400)
         with dpg.table(header_row=False):
@@ -85,6 +115,21 @@ class UICommandSource:
                         with dpg.table_row():
                             dpg.add_button(label='Frame Rate Up', callback=self.__frame_rate_up)
                             dpg.add_button(label='Frame Rate Down', callback=self.__frame_rate_down)
+                        with dpg.table_row():
+                            dpg.add_button(label='Preset 1', callback=self.__preset_1)
+                            dpg.add_button(label='Preset 2', callback=self.__preset_2)
+                        with dpg.table_row():
+                            dpg.add_button(label='Preset 3', callback=self.__preset_3)
+                            dpg.add_button(label='Preset 4', callback=self.__preset_4)
+                        with dpg.table_row():
+                            dpg.add_button(label='Preset 5', callback=self.__preset_5)
+                            dpg.add_button(label='Preset 6', callback=self.__preset_6)
+                        with dpg.table_row():
+                            dpg.add_button(label='Preset 7', callback=self.__preset_7)
+                            dpg.add_button(label='Preset 8', callback=self.__preset_8)
+                        with dpg.table_row():
+                            dpg.add_button(label='Preset 9', callback=self.__preset_9)
+                            dpg.add_button(label='Preset 10', callback=self.__preset_10)
             with dpg.table_row():
                 with dpg.collapsing_header(label='Local Controls', default_open=True):
                     with dpg.table(header_row=False):
