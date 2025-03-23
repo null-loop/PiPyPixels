@@ -4,8 +4,8 @@ from PIL import Image
 class MatrixConfiguration:
     panel_led_height = 64
     panel_led_width = 64
-    overall_led_height = 128
-    overall_led_width = 128
+    overall_led_height = 64
+    overall_led_width = 64
     hardware_mapping = 'adafruit-hat-pwm'
     gpio_slowdown = 5
     limit_refresh_rate_hz = 0

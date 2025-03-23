@@ -136,7 +136,15 @@ class ArtImageScreen(ImageScreen):
             self.__current_artwork_index = len(assets.artwork) - 1
 
     def _render_image(self) ->Image:
-        return assets.artwork[self.__current_artwork_index]
+        image = assets.artwork[self.__current_artwork_index]
+        smallest_dimension = self._matrix.config.overall_led_width
+        if self._matrix.config.overall_led_height < smallest_dimension:
+            smallest_dimension = self._matrix.config.overall_led_height
+
+        if smallest_dimension < image.width:
+            image.thumbnail((smallest_dimension, smallest_dimension))
+
+        return image
 
     def step_back(self):
         self.__current_artwork_index = self.__current_artwork_index - 1
