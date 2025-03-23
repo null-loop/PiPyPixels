@@ -5,6 +5,7 @@ from typing import List
 
 from PIL import ImageColor
 
+from pipypixels.controls.shared import Command
 from pipypixels.games.shared import GameEntity, GameBoard, GameEngine, GameScreen
 from pipypixels.graphics.shared import Matrix
 
@@ -217,10 +218,12 @@ class SnakeEngine(GameEngine):
     def __init__(self, scale, matrix: Matrix, frame_rate):
         super().__init__(scale, matrix, frame_rate)
         self.__snakes = []
+        self.__food_count = 100
+        self.__snake_count = 10
 
     def starting_spawn(self):
-        self.__spawn_foods(100)
-        self.__spawn_snakes(10)
+        self.__spawn_foods(self.__food_count)
+        self.__spawn_snakes(self.__snake_count)
 
     def __spawn_foods(self, count:int):
         if count != 0:
@@ -237,9 +240,9 @@ class SnakeEngine(GameEngine):
 
     def _colour_cell_func(self, x, y, entity_type):
         colour = (0,0,0)
-        if entity_type == GameEntity.SNAKE: colour = ImageColor.getrgb("Green")
-        if entity_type == GameEntity.FOOD: colour = ImageColor.getrgb("Yellow")
-        if entity_type == GameEntity.WALL: colour = ImageColor.getrgb("Red")
+        if entity_type == GameEntity.SNAKE: colour = (0,255,0)
+        if entity_type == GameEntity.FOOD: colour = (255,255,255)
+        if entity_type == GameEntity.WALL: colour = (255,0,0)
         return colour
 
     def _game_tick(self):
@@ -256,8 +259,8 @@ class SnakeEngine(GameEngine):
                 self.__snakes.remove(snake)
 
         self.__spawn_foods(food_to_spawn)
-        if len(self.__snakes) < 100:
-            self.__spawn_snakes(100 - len(self.__snakes))
+        if len(self.__snakes) < self.__snake_count:
+            self.__spawn_snakes(self.__snake_count - len(self.__snakes))
 
     def reset(self):
         self.board.reset()
@@ -270,6 +273,18 @@ class SnakeEngine(GameEngine):
 
     def reset_on_play(self):
         return False
+
+    def _handle_command(self, command:Command):
+        if command == Command.PRESET_1:
+            self.__snake_count = 1
+            self.__food_count = 100
+        elif command == Command.PRESET_2:
+            self.__snake_count = 10
+            self.__food_count = 50
+        elif command == Command.PRESET_3:
+            self.__snake_count = 100
+            self.__food_count = 20
+        self.reset()
 
 class SnakeScreen(GameScreen):
     def __init__(self, matrix: Matrix):
