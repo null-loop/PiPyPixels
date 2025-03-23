@@ -1,5 +1,4 @@
 import math
-import random
 
 from pipypixels.games.shared import GameEntity, GameEngine, GameScreen
 from pipypixels.graphics.shared import Matrix

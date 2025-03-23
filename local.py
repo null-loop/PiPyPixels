@@ -13,8 +13,7 @@ from pipypixels.controls.local import UICommandSource
 def __exit_app():
     dpg.stop_dearpygui()
 
-config = MatrixConfiguration()
-config.brightness = 100
+config = MatrixConfiguration.load('config/config.json')
 matrix = FakeMatrix(config)
 controller = ScreenController(matrix)
 controller.add_screen(StartupImageScreen(matrix))
