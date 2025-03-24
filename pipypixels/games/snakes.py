@@ -295,7 +295,7 @@ class SnakeEngine(GameEngine):
     def _handle_command(self, command:Command):
         if command == Command.PRESET_1:
             # Very long, risk-averse
-            self.__snake_count = 1
+            self.__snake_count = 2
             self.__food_count = 200
             self.__starting_traits = SnakeTraits()
             self.__starting_traits.length_to_split = 1000
