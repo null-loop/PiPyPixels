@@ -87,4 +87,4 @@ class GameOfLifeScreen(GameScreen):
         super().__init__(matrix, self.__get_engine, redraw_on_show=False)
 
     def __get_engine(self) ->GameEngine:
-        return GameOfLifeEngine(self._scale, self._matrix, 32)
+        return GameOfLifeEngine(self._scale, self._matrix, self._frame_rate)

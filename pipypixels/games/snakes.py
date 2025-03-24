@@ -320,7 +320,7 @@ class SnakeScreen(GameScreen):
         super().__init__(matrix, self.__get_engine, redraw_on_show=True)
 
     def __get_engine(self) -> GameEngine:
-        return SnakeEngine(self._scale, self._matrix, 32)
+        return SnakeEngine(self._scale, self._matrix, self._frame_rate)
 
     def redraw(self):
         self._engine.board.matrix.start_new_canvas()
