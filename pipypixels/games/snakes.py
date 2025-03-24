@@ -29,6 +29,7 @@ class SnakeTraits:
         self.snake_weight = float(-1.1)
         self.length_to_split = 30
         self.max_look_ahead = 5
+        self.turns_to_starvation = 0
 
     def mutate(self):
         trait = randrange(3)
@@ -57,12 +58,14 @@ class Snake:
         traits.food_weight = parent_traits.food_weight
         traits.wall_weight = parent_traits.wall_weight
         traits.length_to_split = parent_traits.length_to_split
+        traits.turns_to_starvation = parent_traits.turns_to_starvation
 
         return Snake(new_parts, traits, colour, board)
 
     def __init__(self, parts:List, traits, colour, board: GameBoard):
 
         self.__traits = traits
+        self.__turns_since_last_ate = 0
 
         head_part = parts[0]
         tail_part = parts[-1]
@@ -124,6 +127,7 @@ class Snake:
 
             if target_entity == GameEntity.FOOD:
                 # we're going to grow - so we only move the head, not the tail
+                self.__turns_since_last_ate = 0
                 self.__move_head(new_head_position)
 
                 new_length = len(self.__parts)
@@ -132,6 +136,17 @@ class Snake:
 
                 return SnakeTurnResult.ATE
             else:
+                self.__turns_since_last_ate = self.__turns_since_last_ate + 1
+                # check if we're starving...
+                if 0 < self.__traits.turns_to_starvation < self.__turns_since_last_ate:
+                    if len(self.__parts) == 1:
+                        # starved to death!
+                        self.__clear_all_parts_from_board()
+                        return SnakeTurnResult.DIED
+                    # we need to remove our tail...
+                    self.__move_tail()
+                    self.__turns_since_last_ate = 0
+                    return SnakeTurnResult.MOVED
                 # we're not growing, so move the head and the tail
                 self.__move_head(new_head_position)
                 self.__move_tail()
@@ -295,7 +310,7 @@ class SnakeEngine(GameEngine):
     def _handle_command(self, command:Command):
         if command == Command.PRESET_1:
             # Very long, risk-averse
-            self.__snake_count = 1
+            self.__snake_count = 2
             self.__food_count = 200
             self.__starting_traits = SnakeTraits()
             self.__starting_traits.length_to_split = 1000
@@ -312,7 +327,8 @@ class SnakeEngine(GameEngine):
             self.__snake_count = 100
             self.__food_count = 20
             self.__starting_traits = SnakeTraits()
-            self.__starting_traits.length_to_split = 30
+            self.__starting_traits.length_to_split = 10
+            self.__starting_traits.turns_to_starvation = 100
             self.reset()
 
 class SnakeScreen(GameScreen):
@@ -320,7 +336,7 @@ class SnakeScreen(GameScreen):
         super().__init__(matrix, self.__get_engine, redraw_on_show=True)
 
     def __get_engine(self) -> GameEngine:
-        return SnakeEngine(self._scale, self._matrix, 32)
+        return SnakeEngine(self._scale, self._matrix, self._frame_rate)
 
     def redraw(self):
         self._engine.board.matrix.start_new_canvas()

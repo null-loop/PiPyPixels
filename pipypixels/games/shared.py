@@ -131,6 +131,13 @@ class GameEngine:
         self.__frame_rate = frame_rate
         self.__update_frame_duration_from_rate()
 
+    def get_frame_rate(self):
+        return self.__frame_rate
+
+    def set_frame_rate(self, frame_rate):
+        self.__frame_rate = frame_rate
+        self.__update_frame_duration_from_rate()
+
     def _calculate_game_board_width(self, led_cols, scale):
         return int(math.floor(led_cols / scale))
 
@@ -164,12 +171,6 @@ class GameEngine:
                     self.__paused = True
                 elif command == Command.STEP_FORWARD:
                     self.__step_forward = True
-                elif command == Command.FRAME_RATE_UP:
-                    self.__frame_rate = self.__frame_rate + 1
-                    self.__update_frame_duration_from_rate()
-                elif command == Command.FRAME_RATE_DOWN:
-                    self.__frame_rate = max(self.__frame_rate - 1, 1)
-                    self.__update_frame_duration_from_rate()
                 elif command == Command.RESET:
                     self.reset()
                 else:
@@ -230,9 +231,13 @@ class GameScreen(Screen):
     def __init__(self, matrix: Matrix, engine_func, redraw_on_show=True):
         self.__redraw_on_show = redraw_on_show
         self._matrix = matrix
-        self._engine = engine_func()
+        self._frame_rate = self.initial_frame_rate()
         self.__engine_func = engine_func
+        self._engine = self.__engine_func()
         self._scale = 1
+
+    def initial_frame_rate(self):
+        return 32
 
     def show(self):
         self._matrix.clear()
@@ -249,6 +254,7 @@ class GameScreen(Screen):
         self._engine.end()
         self._matrix.clear()
         self._engine = self.__engine_func()
+        self._frame_rate = self._engine.get_frame_rate()
         self._engine.play()
 
     def receive_command(self, command:Command):
@@ -258,6 +264,12 @@ class GameScreen(Screen):
         elif command == Command.ZOOM_OUT:
             self._scale = max(self._scale - 1, 1)
             self.__rebuild_engine()
+        elif command == Command.FRAME_RATE_UP:
+            self._frame_rate = self._frame_rate + 1
+            self._engine.set_frame_rate(self._frame_rate)
+        elif command == Command.FRAME_RATE_DOWN:
+            self._frame_rate = max(self._frame_rate - 1, 1)
+            self._engine.set_frame_rate(self._frame_rate)
         else:
             self._engine.receive_command(command)
 
