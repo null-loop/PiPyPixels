@@ -28,6 +28,7 @@ class SnakeTraits:
         self.wall_weight = float(-1.1)
         self.snake_weight = float(-1.1)
         self.length_to_split = 30
+        self.max_look_ahead = 5
 
     def mutate(self):
         trait = randrange(3)
@@ -44,10 +45,9 @@ class SnakeTraits:
 class Snake:
 
     @classmethod
-    def spawn_new_snake(cls, x, y, board, length_to_split: int):
+    def spawn_new_snake(cls, x, y, board, traits: SnakeTraits):
         colour = [randrange(235) + 20,randrange(235) + 20,randrange(235) + 20]
-        traits = SnakeTraits()
-        traits.length_to_split = length_to_split
+
         return Snake([[x,y]], traits, colour, board)
 
     @classmethod
@@ -84,44 +84,58 @@ class Snake:
         for part in self.__parts:
             self.__board.set_with_colour(part[0], part[1], GameEntity.SNAKE, self.__colour)
 
+    def __can_move(self,dx,dy)->bool:
+        position = [self.__current_head_position[0] + dx,self.__current_head_position[1] + dy]
+        self.__overflow_position(position)
+        entity = self.__board.get(position[0], position[1])
+        return entity == GameEntity.EMPTY or entity == GameEntity.FOOD
+
     def turn(self)->SnakeTurnResult:
         previous_dx = self.__current_head_position[0] - self.__last_head_position[0]
         previous_dy = self.__current_head_position[1] - self.__last_head_position[1]
 
-        #Score the moves
-        move_one = self.__score_move(-1, 0, previous_dx, previous_dy)
-        move_two = self.__score_move(1, 0, previous_dx, previous_dy)
-        move_three = self.__score_move(0, 1, previous_dx, previous_dy)
-        move_four = self.__score_move(0, -1, previous_dx, previous_dy)
+        possible_moves = []
+        # Score any possible moves
+        if self.__can_move(-1,0):
+            possible_moves.append(self.__score_move(-1, 0, previous_dx, previous_dy))
+        if self.__can_move(1,0):
+            possible_moves.append(self.__score_move(1, 0, previous_dx, previous_dy))
+        if self.__can_move(0,1):
+            possible_moves.append(self.__score_move(0, 1, previous_dx, previous_dy))
+        if self.__can_move(0,-1):
+            possible_moves.append(self.__score_move(0, -1, previous_dx, previous_dy))
 
-        move = move_one
-        if move_two.score > move.score: move = move_two
-        if move_three.score > move.score: move = move_three
-        if move_four.score > move.score: move = move_four
-
-        new_head_position = [self.__current_head_position[0] + move.dx, self.__current_head_position[1] + move.dy]
-
-        self.__overflow_position(new_head_position)
-
-        target_entity = self.__board.get(new_head_position[0], new_head_position[1])
-
-        if target_entity == GameEntity.WALL or target_entity == GameEntity.SNAKE:
+        if len(possible_moves) == 0:
+            # death!
             self.__clear_all_parts_from_board()
             return SnakeTurnResult.DIED
-        elif target_entity == GameEntity.FOOD:
-            # we're going to grow - so we only move the head, not the tail
-            self.__move_head(new_head_position)
-
-            new_length = len(self.__parts)
-            if new_length == self.__length_to_split:
-                return SnakeTurnResult.SPLIT
-
-            return SnakeTurnResult.ATE
         else:
-            # we're not growing, so move the head and the tail
-            self.__move_head(new_head_position)
-            self.__move_tail()
-            return SnakeTurnResult.MOVED
+            # pick the best move and apply it
+            move = None
+            for possible_move in possible_moves:
+                if move is None or move.score < possible_move.score:
+                    move = possible_move
+
+            new_head_position = [self.__current_head_position[0] + move.dx, self.__current_head_position[1] + move.dy]
+
+            self.__overflow_position(new_head_position)
+
+            target_entity = self.__board.get(new_head_position[0], new_head_position[1])
+
+            if target_entity == GameEntity.FOOD:
+                # we're going to grow - so we only move the head, not the tail
+                self.__move_head(new_head_position)
+
+                new_length = len(self.__parts)
+                if new_length == self.__length_to_split:
+                    return SnakeTurnResult.SPLIT
+
+                return SnakeTurnResult.ATE
+            else:
+                # we're not growing, so move the head and the tail
+                self.__move_head(new_head_position)
+                self.__move_tail()
+                return SnakeTurnResult.MOVED
 
     def split(self):
         # split the parts of our current snake into ours and theirs
@@ -174,7 +188,7 @@ class Snake:
         else:
             current_score = float(0)
 
-        max_look_ahead = 5
+        max_look_ahead = self.__traits.max_look_ahead
         current_look_ahead = 1
         projected_head_position_x = self.__current_head_position[0]
         projected_head_position_y = self.__current_head_position[1]
@@ -223,7 +237,7 @@ class SnakeEngine(GameEngine):
         self.__snakes = []
         self.__food_count = 100
         self.__snake_count = 20
-        self.__split_on_length = 30
+        self.__starting_traits = SnakeTraits()
 
     def starting_spawn(self):
         self.__spawn_foods(self.__food_count)
@@ -239,7 +253,7 @@ class SnakeEngine(GameEngine):
         if count != 0:
             for i in range(count):
                 pos = self.board.get_random_empty_position()
-                snake = Snake.spawn_new_snake(pos[0], pos[1], self.board, self.__split_on_length)
+                snake = Snake.spawn_new_snake(pos[0], pos[1], self.board, self.__starting_traits)
                 self.__snakes.append(snake)
 
     def _colour_cell_func(self, x, y, entity_type):
@@ -280,19 +294,25 @@ class SnakeEngine(GameEngine):
 
     def _handle_command(self, command:Command):
         if command == Command.PRESET_1:
+            # Very long, risk-averse
             self.__snake_count = 1
             self.__food_count = 200
-            self.__split_on_length = 1000
+            self.__starting_traits = SnakeTraits()
+            self.__starting_traits.length_to_split = 1000
+            self.__starting_traits.snake_weight = -100
+            self.__starting_traits.max_look_ahead = 20
             self.reset()
         elif command == Command.PRESET_2:
             self.__snake_count = 10
             self.__food_count = 50
-            self.__split_on_length = 100
+            self.__starting_traits = SnakeTraits()
+            self.__starting_traits.length_to_split = 100
             self.reset()
         elif command == Command.PRESET_3:
             self.__snake_count = 100
             self.__food_count = 20
-            self.__split_on_length = 30
+            self.__starting_traits = SnakeTraits()
+            self.__starting_traits.length_to_split = 30
             self.reset()
 
 class SnakeScreen(GameScreen):
