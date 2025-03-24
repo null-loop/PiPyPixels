@@ -141,7 +141,6 @@ class Snake:
                 if 0 < self.__traits.turns_to_starvation < self.__turns_since_last_ate:
                     if len(self.__parts) == 1:
                         # starved to death!
-                        print('Starved to death!')
                         self.__clear_all_parts_from_board()
                         return SnakeTurnResult.DIED
                     # we need to remove our tail...
