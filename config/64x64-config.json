@@ -31,7 +31,18 @@
             "SOLVER": [0,255,0],
             "SOLVER_ABANDONED": [0,60,0]
           },
-          "frame_rate": 48
+          "frame_rate": 48,
+          "scale": 1
+        },
+        "1": {
+          "colours": {
+            "EMPTY": [0,0,0],
+            "WALL": [180,180,180],
+            "SOLVER": [180,0,255],
+            "SOLVER_ABANDONED": [90,0,128]
+          },
+          "frame_rate": 48,
+          "scale": 1
         }
       }
     },

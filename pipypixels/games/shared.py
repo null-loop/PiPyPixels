@@ -21,6 +21,34 @@ class GameEntity(Enum):
     BALL = 6
     SOLVER_ABANDONED = 7
 
+class GamePreset:
+    colours = {}
+    frame_rate = 1
+    scale = 1
+
+    @staticmethod
+    def create_from_json_config(preset_json_config):
+        preset = GamePreset()
+        preset.colours = GamePreset.create_colours_from_json_config(preset_json_config["colours"])
+        preset.scale = preset_json_config["scale"]
+        preset.frame_rate = preset_json_config["frame_rate"]
+        return preset
+
+    @staticmethod
+    def create_many_from_json_config(screen_json_config):
+        presets = []
+        for preset_index in screen_json_config["presets"]:
+            preset = GamePreset.create_from_json_config(screen_json_config["presets"][preset_index])
+            presets.append(preset)
+        return presets
+
+    @staticmethod
+    def create_colours_from_json_config(colours_json_config):
+        colours = {}
+        for entity_name in colours_json_config:
+            colours[GameEntity[entity_name]] = colours_json_config[entity_name]
+        return colours
+
 class GameBoard:
     def __init__(self, width, height, scale, matrix, cell_colour_func):
         self.__entities = []
@@ -165,7 +193,6 @@ class GameEngine:
             frame_start = time.time_ns()
             if not self.__command_queue.empty():
                 command = self.__command_queue.get()
-                print(f'GameEngine:__game_loop:{command}')
                 if command == Command.EXIT:
                     return
                 elif command == Command.PAUSE_PLAY:

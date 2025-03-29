@@ -12,8 +12,7 @@ def __exit_app():
     dpg.stop_dearpygui()
 
 all_config = load_config()
-matrix_config = MatrixConfiguration.create_from_json(all_config)
-matrix = FakeMatrix(matrix_config)
+matrix = FakeMatrix(MatrixConfiguration.create_from_json(all_config))
 controller = ScreenController(matrix)
 
 load_screens(all_config, controller, matrix)

@@ -2,7 +2,7 @@ import json
 
 from pipypixels.games.bounce import BounceScreen
 from pipypixels.games.life import GameOfLifeScreen
-from pipypixels.games.maze import MazeScreen
+from pipypixels.games.maze import MazeScreen, MazeConfiguration
 from pipypixels.games.snakes import SnakeScreen
 from pipypixels.graphics.shared import Matrix
 from pipypixels.screens import ScreenController, ArtworkScreen, StartupImageScreen
@@ -26,7 +26,8 @@ def load_screens(json_config, screen_controller: ScreenController, matrix: Matri
         elif screen_type == "snake":
             screen = SnakeScreen(matrix)
         elif screen_type == "maze":
-            screen = MazeScreen(matrix)
+            maze_config = MazeConfiguration.create_from_json(screen_config)
+            screen = MazeScreen(maze_config, matrix)
         elif screen_type == "game-of-life":
             screen = GameOfLifeScreen(matrix)
 

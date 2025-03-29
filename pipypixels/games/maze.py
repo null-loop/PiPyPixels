@@ -4,7 +4,7 @@ import time
 from enum import Enum
 from random import choice, randrange
 
-from pipypixels.games.shared import GameEntity, GameBoard, GameEngine, GameScreen
+from pipypixels.games.shared import GameEntity, GameBoard, GameEngine, GameScreen, GamePreset
 from pipypixels.graphics.shared import Matrix
 
 
@@ -17,6 +17,15 @@ class GameState(Enum):
     NOT_STARTED = 0
     PROGRESSING = 1
     RETURNING = 2
+
+class MazeConfiguration:
+    presets = []
+
+    @staticmethod
+    def create_from_json(screen_json_config):
+        config = MazeConfiguration()
+        config.presets = GamePreset.create_many_from_json_config(screen_json_config)
+        return config
 
 class MazeGenerator:
     _UP = (0,1)
@@ -70,7 +79,7 @@ class MazeGenerator:
                 self.__visit(next_x, next_y)
 
 class MazeEngine(GameEngine):
-    def __init__(self, scale, matrix: Matrix, frame_rate):
+    def __init__(self, scale, matrix: Matrix, frame_rate, config: MazeConfiguration):
         super().__init__(scale, matrix, frame_rate)
         self.__maze_entrance = ()
         self.__maze_exit = ()
@@ -79,6 +88,8 @@ class MazeEngine(GameEngine):
         self.__state = GameState.NOT_STARTED
         self.__wait_until = -1
         self.__returning_to = None
+        self.__config = config
+        self.__current_preset = config.presets[0]
 
     def _calculate_game_board_width(self, led_cols, scale):
         w = int(math.floor(led_cols / scale))
@@ -93,19 +104,16 @@ class MazeEngine(GameEngine):
         return h
 
     def _colour_cell_func(self, x, y, entity_type):
-        colour = [0,0,0]
-        if entity_type == GameEntity.WALL:
-            colour = [80,80,80]
-        if entity_type == GameEntity.SOLVER:
-            colour = [0, 255, 0]
-        if entity_type == GameEntity.SOLVER_ABANDONED:
-            colour = [0, 60, 0]
-
-        return colour
+        return self.__current_preset.colours[entity_type]
 
     def reset(self):
         self.__wait_until = -1
         self.__generate_maze()
+
+    def apply_preset(self, preset_index):
+        if preset_index >= len(self.__config.presets):
+            preset_index = 0
+        self.__current_preset = self.__config.presets[preset_index]
 
     def _game_tick(self):
         if self.__wait_until > 0:
@@ -192,8 +200,9 @@ class MazeEngine(GameEngine):
                 self.board.set(self.board.width() - 1, pos_y, GameEntity.EMPTY)
 
 class MazeScreen(GameScreen):
-    def __init__(self, matrix: Matrix):
+    def __init__(self, config: MazeConfiguration, matrix: Matrix):
+        self.__config = config
         super().__init__(matrix, self.__get_engine, redraw_on_show=False)
 
     def __get_engine(self) ->GameEngine:
-        return MazeEngine(self._scale, self._matrix, self._frame_rate)
+        return MazeEngine(self._scale, self._matrix, self._frame_rate, self.__config)

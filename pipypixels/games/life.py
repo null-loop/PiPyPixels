@@ -59,7 +59,6 @@ class GameOfLifeEngine(GameEngine):
             self.board.set(d[0], d[1], GameEntity.EMPTY)
 
     def reset(self):
-        print('GameOfLifeEngine::reset')
         if self.__preset_index == 0:
             self.__random_spawn(5)
         elif self.__preset_index == 1:
@@ -76,7 +75,6 @@ class GameOfLifeEngine(GameEngine):
         self.__spawn_many(positions)
 
     def apply_preset(self, preset_index):
-        print('GameOfLifeEngine::apply_preset')
         if 0 <= preset_index <= 1:
             self.__preset_index = preset_index
 

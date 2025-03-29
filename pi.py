@@ -8,9 +8,9 @@ from pipypixels.graphics.shared import MatrixConfiguration
 from pipypixels.screens import ScreenController
 from pipypixels.shared import load_config, load_screens
 
+
 all_config = load_config()
-matrix_config = MatrixConfiguration.create_from_json(all_config)
-matrix = LEDMatrix(matrix_config)
+matrix = LEDMatrix(MatrixConfiguration.create_from_json(all_config))
 controller = ScreenController(matrix)
 
 load_screens(all_config, controller, matrix)
