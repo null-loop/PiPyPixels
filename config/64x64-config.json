@@ -10,5 +10,33 @@
     "brightness": 100,
     "disable_hardware_pulsing": false,
     "drop_privileges": false
-  }
+  },
+  "screens": [
+    {
+      "type": "artwork"
+    },
+    {
+      "type": "bounce"
+    },
+    {
+      "type": "snake"
+    },
+    {
+      "type": "maze",
+      "presets": {
+        "0": {
+          "colours": {
+            "EMPTY": [0,0,0],
+            "WALL": [180,180,180],
+            "SOLVER": [0,255,0],
+            "SOLVER_ABANDONED": [0,60,0]
+          },
+          "frame_rate": 48
+        }
+      }
+    },
+    {
+      "type": "game-of-life"
+    }
+  ]
 }

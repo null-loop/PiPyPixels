@@ -124,7 +124,7 @@ class StartupImageScreen(ImageScreen):
             image = assets.logo_32_by_32
         return image
 
-class ArtImageScreen(ImageScreen):
+class ArtworkScreen(ImageScreen):
     def __init__(self, matrix: Matrix):
         super().__init__(10000, matrix)
         self.__current_artwork_index = 0

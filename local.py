@@ -1,27 +1,23 @@
 import dearpygui.dearpygui as dpg
 
+from pipypixels.controls.local import UICommandSource
 from pipypixels.controls.shared import Command
-from pipypixels.games.bounce import BounceScreen
-from pipypixels.games.life import GameOfLifeScreen
-from pipypixels.games.maze import MazeScreen
-from pipypixels.games.snakes import SnakeScreen
 from pipypixels.graphics.local import FakeMatrix
 from pipypixels.graphics.shared import MatrixConfiguration
-from pipypixels.screens import ScreenController, StartupImageScreen, ArtImageScreen
-from pipypixels.controls.local import UICommandSource
+from pipypixels.screens import ScreenController
+from pipypixels.shared import load_config, load_screens
+
 
 def __exit_app():
     dpg.stop_dearpygui()
 
-config = MatrixConfiguration.load('config/config.json')
-matrix = FakeMatrix(config)
+all_config = load_config()
+matrix_config = MatrixConfiguration.create_from_json(all_config)
+matrix = FakeMatrix(matrix_config)
 controller = ScreenController(matrix)
-controller.add_screen(StartupImageScreen(matrix))
-controller.add_screen(ArtImageScreen(matrix))
-controller.add_screen(BounceScreen(matrix))
-controller.add_screen(SnakeScreen(matrix))
-controller.add_screen(MazeScreen(matrix))
-controller.add_screen(GameOfLifeScreen(matrix))
+
+load_screens(all_config, controller, matrix)
+
 command_source = UICommandSource(controller, matrix)
 
 dpg.create_context()

@@ -307,29 +307,30 @@ class SnakeEngine(GameEngine):
     def reset_on_play(self):
         return False
 
-    def _handle_command(self, command:Command):
-        if command == Command.PRESET_1:
+    def apply_preset(self, preset_index):
+        if preset_index == 0:
+            self.__food_count = 100
+            self.__snake_count = 20
+            self.__starting_traits = SnakeTraits()
+        elif preset_index == 1:
             # Very long, risk-averse
             self.__snake_count = 2
             self.__food_count = 200
             self.__starting_traits = SnakeTraits()
             self.__starting_traits.length_to_split = 1000
             self.__starting_traits.snake_weight = -100
-            self.__starting_traits.max_look_ahead = 20
-            self.reset()
-        elif command == Command.PRESET_2:
+            self.__starting_traits.max_look_ahead = 50
+        elif preset_index == 2:
             self.__snake_count = 10
             self.__food_count = 50
             self.__starting_traits = SnakeTraits()
             self.__starting_traits.length_to_split = 100
-            self.reset()
-        elif command == Command.PRESET_3:
+        elif preset_index == 3:
             self.__snake_count = 100
             self.__food_count = 20
             self.__starting_traits = SnakeTraits()
             self.__starting_traits.length_to_split = 10
             self.__starting_traits.turns_to_starvation = 100
-            self.reset()
 
 class SnakeScreen(GameScreen):
     def __init__(self, matrix: Matrix):

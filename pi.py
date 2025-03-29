@@ -1,25 +1,20 @@
 import sys
 import time
 
-from pipypixels.controls.shared import Command
 from pipypixels.controls.pi import RemoteKeyboardCommandSource
-from pipypixels.games.bounce import BounceScreen
-from pipypixels.games.life import GameOfLifeScreen
-from pipypixels.games.maze import MazeScreen
-from pipypixels.games.snakes import SnakeScreen
+from pipypixels.controls.shared import Command
 from pipypixels.graphics.pi import LEDMatrix
 from pipypixels.graphics.shared import MatrixConfiguration
-from pipypixels.screens import ScreenController, StartupImageScreen, ArtImageScreen
+from pipypixels.screens import ScreenController
+from pipypixels.shared import load_config, load_screens
 
-config = MatrixConfiguration.load('config/config.json')
-matrix = LEDMatrix(config)
+all_config = load_config()
+matrix_config = MatrixConfiguration.create_from_json(all_config)
+matrix = LEDMatrix(matrix_config)
 controller = ScreenController(matrix)
-controller.add_screen(StartupImageScreen(matrix))
-controller.add_screen(ArtImageScreen(matrix))
-controller.add_screen(BounceScreen(matrix))
-controller.add_screen(SnakeScreen(matrix))
-controller.add_screen(MazeScreen(matrix))
-controller.add_screen(GameOfLifeScreen(matrix))
+
+load_screens(all_config, controller, matrix)
+
 command_source = RemoteKeyboardCommandSource(controller)
 
 try:

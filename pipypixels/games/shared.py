@@ -19,6 +19,7 @@ class GameEntity(Enum):
     CELL = 3
     SOLVER = 5
     BALL = 6
+    SOLVER_ABANDONED = 7
 
 class GameBoard:
     def __init__(self, width, height, scale, matrix, cell_colour_func):
@@ -156,11 +157,15 @@ class GameEngine:
     def _handle_command(self, command:Command):
         pass
 
+    def apply_preset(self, preset_index):
+        pass
+
     def __game_loop(self):
         while True:
             frame_start = time.time_ns()
             if not self.__command_queue.empty():
                 command = self.__command_queue.get()
+                print(f'GameEngine:__game_loop:{command}')
                 if command == Command.EXIT:
                     return
                 elif command == Command.PAUSE_PLAY:
@@ -206,11 +211,11 @@ class GameEngine:
     def end(self):
         self.receive_command(Command.EXIT)
 
-    def play(self):
+    def play(self, ignore_reset = False):
         if self.__thread is None:
             self.receive_command(Command.RESET)
             self.begin()
-        elif self.reset_on_play():
+        elif self.reset_on_play() and not ignore_reset:
             self.receive_command(Command.RESET)
         self.receive_command(Command.PLAY)
 
@@ -235,6 +240,7 @@ class GameScreen(Screen):
         self.__engine_func = engine_func
         self._engine = self.__engine_func()
         self._scale = 1
+        self.__preset_index = 0
 
     def initial_frame_rate(self):
         return 32
@@ -254,8 +260,17 @@ class GameScreen(Screen):
         self._engine.end()
         self._matrix.clear()
         self._engine = self.__engine_func()
+        self._engine.apply_preset(self.__preset_index)
         self._frame_rate = self._engine.get_frame_rate()
-        self._engine.play()
+        self._engine.play(True)
+
+    def __apply_preset(self, preset_index):
+        self.__preset_index = preset_index
+        self._engine.pause()
+        self._engine.wait_for_paused()
+        self._engine.apply_preset(preset_index)
+        self._engine.reset()
+        self._engine.play(True)
 
     def receive_command(self, command:Command):
         if command == Command.ZOOM_IN:
@@ -270,6 +285,26 @@ class GameScreen(Screen):
         elif command == Command.FRAME_RATE_DOWN:
             self._frame_rate = max(self._frame_rate - 1, 1)
             self._engine.set_frame_rate(self._frame_rate)
+        elif command == Command.PRESET_0:
+            self.__apply_preset(0)
+        elif command == Command.PRESET_1:
+            self.__apply_preset(1)
+        elif command == Command.PRESET_2:
+            self.__apply_preset(2)
+        elif command == Command.PRESET_3:
+            self.__apply_preset(3)
+        elif command == Command.PRESET_4:
+            self.__apply_preset(4)
+        elif command == Command.PRESET_5:
+            self.__apply_preset(5)
+        elif command == Command.PRESET_6:
+            self.__apply_preset(6)
+        elif command == Command.PRESET_7:
+            self.__apply_preset(7)
+        elif command == Command.PRESET_8:
+            self.__apply_preset(8)
+        elif command == Command.PRESET_9:
+            self.__apply_preset(9)
         else:
             self._engine.receive_command(command)
 

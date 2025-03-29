@@ -98,6 +98,9 @@ class MazeEngine(GameEngine):
             colour = [80,80,80]
         if entity_type == GameEntity.SOLVER:
             colour = [0, 255, 0]
+        if entity_type == GameEntity.SOLVER_ABANDONED:
+            colour = [0, 60, 0]
+
         return colour
 
     def reset(self):
@@ -117,10 +120,6 @@ class MazeEngine(GameEngine):
             elif self.__state == GameState.PROGRESSING:
                 current = self.__trail[-1]
                 can_move = self.board.get_immediate_neighbours(current[0], current[1], GameEntity.EMPTY)
-                # if we've returned to a previous junction - remove the turns we've already taken from the possible moves
-                if self.__returning_to is not None:
-                    for already_turned in self.__returning_to.turns:
-                        can_move.remove(already_turned)
                 # 'tis a dead end my lord!
                 if len(can_move) == 0:
                     # if we're already returning to a junction, then pop that junction as it's exhausted
@@ -157,7 +156,7 @@ class MazeEngine(GameEngine):
                     self.__state = GameState.PROGRESSING
                 else:
                     trimmed = self.__trail.pop()
-                    self.board.set_with_colour(trimmed[0], trimmed[1], GameEntity.EMPTY, [0, 60, 0])
+                    self.board.set(trimmed[0], trimmed[1], GameEntity.SOLVER_ABANDONED)
 
             # check when we've solved the maze - and start another one!
             if fin:
