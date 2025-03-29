@@ -1,13 +1,13 @@
 import math
 from random import randrange
 
-from pipypixels.games.shared import VectorGameEngine, GameScreen, GameEngine, GameEntity
+from pipypixels.games.shared import GameScreen, GameEngine, GameEntity, GameConfiguration
 from pipypixels.graphics.shared import Matrix
 
 
-class BounceEngine(VectorGameEngine):
-    def __init__(self, scale, matrix: Matrix, frame_rate):
-        super().__init__(scale, matrix, frame_rate)
+class BounceEngine(GameEngine):
+    def __init__(self, matrix: Matrix, config: GameConfiguration):
+        super().__init__(matrix, config)
         self.__balls = []
 
     def reset(self):
@@ -104,14 +104,11 @@ class BounceEngine(VectorGameEngine):
         return False
 
 class BounceScreen(GameScreen):
-    def __init__(self, matrix: Matrix):
-        super().__init__(matrix, self.__get_engine, redraw_on_show=True)
+    def __init__(self, config: GameConfiguration, matrix: Matrix):
+        super().__init__(matrix, self.__get_engine, config, redraw_on_show=True)
 
     def __get_engine(self) ->GameEngine:
-        return BounceEngine(self._scale, self._matrix, self._frame_rate)
-
-    def initial_frame_rate(self):
-        return 48
+        return BounceEngine(self._matrix, self._config)
 
     def redraw(self):
         self._engine.board.matrix.start_new_canvas()

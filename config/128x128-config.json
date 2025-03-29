@@ -5,7 +5,7 @@
     "panel_led_width": 64,
     "panel_led_height": 64,
     "hardware_mapping": "adafruit-hat-pwm",
-    "gpio_slowdown": 5,
+    "gpio_slowdown": 1,
     "limit_refresh_rate_hz": 0,
     "brightness": 100,
     "disable_hardware_pulsing": false,
@@ -13,19 +13,51 @@
   },
   "screens": [
     {
-      "type": "artwork"
+      "type": "artwork",
+      "path": "./assets/art"
     },
     {
-      "type": "bounce"
+      "type": "bounce",
+      "frame_rate": 24,
+      "scale": 1
     },
     {
-      "type": "snake"
+      "type": "snake",
+      "frame_rate": 24,
+      "scale": 1
     },
     {
-      "type": "maze"
+      "type": "maze",
+      "frame_rate": 48,
+      "scale": 1,
+      "presets": {
+        "0": {
+          "colours": {
+            "EMPTY": [0,0,0],
+            "WALL": [180,180,180],
+            "SOLVER": [0,255,0],
+            "SOLVER_ABANDONED": [0,60,0]
+          }
+        },
+        "1": {
+          "colours": {
+            "EMPTY": [0,0,0],
+            "WALL": [180,180,180],
+            "SOLVER": [180,0,255],
+            "SOLVER_ABANDONED": [90,0,128]
+          }
+        }
+      }
     },
     {
-      "type": "game-of-life"
+      "type": "game-of-life",
+      "frame_rate": 24,
+      "scale": 1,
+      "presets": {
+        "0": {
+          "mask_path": "./assets/life-presets/gosper-glider-gun.png"
+        }
+      }
     }
   ]
 }

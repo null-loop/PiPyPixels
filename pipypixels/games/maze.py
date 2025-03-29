@@ -1,10 +1,7 @@
-import math
 import sys
-import time
-from enum import Enum
-from random import choice, randrange
+from random import choice
 
-from pipypixels.games.shared import GameEntity, GameBoard, GameEngine, GameScreen, GamePreset
+from pipypixels.games.shared import *
 from pipypixels.graphics.shared import Matrix
 
 
@@ -18,13 +15,15 @@ class GameState(Enum):
     PROGRESSING = 1
     RETURNING = 2
 
-class MazeConfiguration:
+class MazeConfiguration(GameConfiguration):
     presets = []
 
     @staticmethod
     def create_from_json(screen_json_config):
         config = MazeConfiguration()
         config.presets = GamePreset.create_many_from_json_config(screen_json_config)
+        config.frame_rate = screen_json_config["frame_rate"]
+        config.scale = screen_json_config["scale"]
         return config
 
 class MazeGenerator:
@@ -79,8 +78,8 @@ class MazeGenerator:
                 self.__visit(next_x, next_y)
 
 class MazeEngine(GameEngine):
-    def __init__(self, scale, matrix: Matrix, frame_rate, config: MazeConfiguration):
-        super().__init__(scale, matrix, frame_rate)
+    def __init__(self, matrix: Matrix, config: MazeConfiguration):
+        super().__init__(matrix, config)
         self.__maze_entrance = ()
         self.__maze_exit = ()
         self.__trail = []
@@ -202,7 +201,7 @@ class MazeEngine(GameEngine):
 class MazeScreen(GameScreen):
     def __init__(self, config: MazeConfiguration, matrix: Matrix):
         self.__config = config
-        super().__init__(matrix, self.__get_engine, redraw_on_show=False)
+        super().__init__(matrix, self.__get_engine, config, redraw_on_show=False)
 
     def __get_engine(self) ->GameEngine:
-        return MazeEngine(self._scale, self._matrix, self._frame_rate, self.__config)
+        return MazeEngine(self._matrix, self.__config)

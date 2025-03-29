@@ -6,7 +6,7 @@ from typing import List
 from PIL import ImageColor
 
 from pipypixels.controls.shared import Command
-from pipypixels.games.shared import GameEntity, GameBoard, GameEngine, GameScreen
+from pipypixels.games.shared import GameEntity, GameBoard, GameEngine, GameScreen, GameConfiguration
 from pipypixels.graphics.shared import Matrix
 
 
@@ -247,8 +247,8 @@ class Snake:
         position[1] = self.__overflow_y(position[1])
 
 class SnakeEngine(GameEngine):
-    def __init__(self, scale, matrix: Matrix, frame_rate):
-        super().__init__(scale, matrix, frame_rate)
+    def __init__(self, matrix: Matrix, config: GameConfiguration):
+        super().__init__(matrix, config)
         self.__snakes = []
         self.__food_count = 100
         self.__snake_count = 20
@@ -333,11 +333,11 @@ class SnakeEngine(GameEngine):
             self.__starting_traits.turns_to_starvation = 100
 
 class SnakeScreen(GameScreen):
-    def __init__(self, matrix: Matrix):
-        super().__init__(matrix, self.__get_engine, redraw_on_show=True)
+    def __init__(self, config: GameConfiguration, matrix: Matrix):
+        super().__init__(matrix, self.__get_engine, config,redraw_on_show=True)
 
     def __get_engine(self) -> GameEngine:
-        return SnakeEngine(self._scale, self._matrix, self._frame_rate)
+        return SnakeEngine(self._matrix, self._config)
 
     def redraw(self):
         self._engine.board.matrix.start_new_canvas()

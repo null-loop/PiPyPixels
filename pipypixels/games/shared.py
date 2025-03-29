@@ -23,15 +23,11 @@ class GameEntity(Enum):
 
 class GamePreset:
     colours = {}
-    frame_rate = 1
-    scale = 1
 
     @staticmethod
     def create_from_json_config(preset_json_config):
         preset = GamePreset()
         preset.colours = GamePreset.create_colours_from_json_config(preset_json_config["colours"])
-        preset.scale = preset_json_config["scale"]
-        preset.frame_rate = preset_json_config["frame_rate"]
         return preset
 
     @staticmethod
@@ -48,6 +44,10 @@ class GamePreset:
         for entity_name in colours_json_config:
             colours[GameEntity[entity_name]] = colours_json_config[entity_name]
         return colours
+
+class GameConfiguration:
+    frame_rate = 24
+    scale = 1
 
 class GameBoard:
     def __init__(self, width, height, scale, matrix, cell_colour_func):
@@ -149,15 +149,15 @@ class GameBoard:
         return randrange(self.height())
 
 class GameEngine:
-    def __init__(self, scale, matrix: Matrix, frame_rate):
-        width = self._calculate_game_board_width(matrix.config.overall_led_width, scale)
-        height = self._calculate_game_board_height(matrix.config.overall_led_height, scale)
-        self.board = GameBoard(width, height, scale, matrix, self._colour_cell_func)
+    def __init__(self, matrix: Matrix, config: GameConfiguration):
+        width = self._calculate_game_board_width(matrix.config.overall_led_width, config.scale)
+        height = self._calculate_game_board_height(matrix.config.overall_led_height, config.scale)
+        self.board = GameBoard(width, height, config.scale, matrix, self._colour_cell_func)
         self.__thread = None
         self.__command_queue = queue.Queue()
         self.__paused = False
         self.__step_forward = False
-        self.__frame_rate = frame_rate
+        self.__frame_rate = config.frame_rate
         self.__update_frame_duration_from_rate()
 
     def get_frame_rate(self):
@@ -259,18 +259,14 @@ class GameEngine:
         return True
 
 class GameScreen(Screen):
-    _scale = 1
-    def __init__(self, matrix: Matrix, engine_func, redraw_on_show=True):
+    def __init__(self, matrix: Matrix, engine_func, config: GameConfiguration, redraw_on_show=True):
+        self._config = config
         self.__redraw_on_show = redraw_on_show
         self._matrix = matrix
-        self._frame_rate = self.initial_frame_rate()
         self.__engine_func = engine_func
         self._engine = self.__engine_func()
-        self._scale = 1
         self.__preset_index = 0
 
-    def initial_frame_rate(self):
-        return 32
 
     def show(self):
         self._matrix.clear()
@@ -287,6 +283,7 @@ class GameScreen(Screen):
         self._engine.end()
         self._matrix.clear()
         self._engine = self.__engine_func()
+        self._engine.set_frame_rate(self._config.frame_rate)
         self._engine.apply_preset(self.__preset_index)
         self._frame_rate = self._engine.get_frame_rate()
         self._engine.play(True)
@@ -301,17 +298,17 @@ class GameScreen(Screen):
 
     def receive_command(self, command:Command):
         if command == Command.ZOOM_IN:
-            self._scale = min(self._scale + 1, 8)
+            self._config.scale = min(self._config.scale + 1, 8)
             self.__rebuild_engine()
         elif command == Command.ZOOM_OUT:
-            self._scale = max(self._scale - 1, 1)
+            self._config.scale = max(self._config.scale - 1, 1)
             self.__rebuild_engine()
         elif command == Command.FRAME_RATE_UP:
-            self._frame_rate = self._frame_rate + 1
-            self._engine.set_frame_rate(self._frame_rate)
+            self._config.frame_rate = self._frame_rate + 1
+            self._engine.set_frame_rate(self._config.frame_rate)
         elif command == Command.FRAME_RATE_DOWN:
-            self._frame_rate = max(self._frame_rate - 1, 1)
-            self._engine.set_frame_rate(self._frame_rate)
+            self._config.frame_rate = max(self._frame_rate - 1, 1)
+            self._engine.set_frame_rate(self._config.frame_rate)
         elif command == Command.PRESET_0:
             self.__apply_preset(0)
         elif command == Command.PRESET_1:
@@ -342,8 +339,4 @@ class GameScreen(Screen):
         self._engine.board.matrix.start_new_canvas()
         self._engine.board.redraw()
         self._engine.board.matrix.finish_canvas()
-
-class VectorGameEngine(GameEngine):
-    def __init__(self, scale, matrix: Matrix, frame_rate):
-        super().__init__(scale, matrix, frame_rate)
 

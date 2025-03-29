@@ -4,16 +4,16 @@ from PIL import Image
 from numpy import asarray
 
 from pipypixels.controls.shared import Command
-from pipypixels.games.shared import GameEntity, GameEngine, GameScreen
+from pipypixels.games.shared import GameEntity, GameEngine, GameScreen, GameConfiguration
 from pipypixels.graphics import assets
 from pipypixels.graphics.shared import Matrix
 
 
 class GameOfLifeEngine(GameEngine):
 
-    def __init__(self, scale, matrix: Matrix, frame_rate):
+    def __init__(self, matrix: Matrix, config: GameConfiguration):
         self.__preset_index = 0
-        super().__init__(scale, matrix, frame_rate)
+        super().__init__(matrix, config)
 
     def _colour_cell_func(self, x, y, entity_type:GameEntity):
         colour = (0,0,0)
@@ -79,8 +79,8 @@ class GameOfLifeEngine(GameEngine):
             self.__preset_index = preset_index
 
 class GameOfLifeScreen(GameScreen):
-    def __init__(self, matrix: Matrix):
-        super().__init__(matrix, self.__get_engine, redraw_on_show=False)
+    def __init__(self, config: GameConfiguration, matrix: Matrix):
+        super().__init__(matrix, self.__get_engine, config, redraw_on_show=False)
 
     def __get_engine(self) ->GameEngine:
-        return GameOfLifeEngine(self._scale, self._matrix, self._frame_rate)
+        return GameOfLifeEngine(self._matrix, self._config)
