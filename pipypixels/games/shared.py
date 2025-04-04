@@ -23,11 +23,18 @@ class GameEntity(Enum):
 
 class GamePreset:
     colours = {}
+    pattern = "none"
+    mask = "none"
 
     @staticmethod
     def create_from_json_config(preset_json_config):
         preset = GamePreset()
-        preset.colours = GamePreset.create_colours_from_json_config(preset_json_config["colours"])
+        if "colours" in preset_json_config:
+            preset.colours = GamePreset.create_colours_from_json_config(preset_json_config["colours"])
+        if "pattern" in preset_json_config:
+            preset.pattern = preset_json_config["pattern"]
+        if "mask" in preset_json_config:
+            preset.mask = preset_json_config["mask"]
         return preset
 
     @staticmethod

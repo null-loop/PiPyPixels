@@ -55,7 +55,11 @@
       "scale": 1,
       "presets": {
         "0": {
-          "mask_path": "./assets/life-presets/gosper-glider-gun.png"
+          "pattern": "random"
+        },
+        "1": {
+          "pattern": "mask",
+          "mask": "gosper-glider-gun.png"
         }
       }
     }
