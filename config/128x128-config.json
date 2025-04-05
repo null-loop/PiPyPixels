@@ -24,7 +24,7 @@
     {
       "type": "snake",
       "frame_rate": 24,
-      "scale": 1
+      "scale": 1,
     },
     {
       "type": "maze",
@@ -55,7 +55,11 @@
       "scale": 1,
       "presets": {
         "0": {
-          "pattern": "random"
+          "pattern": "random",
+          "colours": {
+            "EMPTY": [0,0,0],
+            "CELL": [200,0,0]
+          }
         },
         "1": {
           "pattern": "mask",

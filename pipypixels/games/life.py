@@ -28,13 +28,16 @@ class GameOfLifeEngine(GameEngine):
         self.__current_preset = config.presets[0]
 
     def _colour_cell_func(self, x, y, entity_type:GameEntity):
-        colour = (0,0,0)
-        if entity_type == GameEntity.CELL:
-            r = (x / self.board.width()) * 256
-            b = (y / self.board.height()) * 256
-            g = 50
-            colour = [r, g, b]
-        return colour
+        if len(self.__current_preset.colours) > 0:
+            return self.__current_preset.colours[entity_type]
+        else:
+            colour = (0,0,0)
+            if entity_type == GameEntity.CELL:
+                r = (x / self.board.width()) * 256
+                b = (y / self.board.height()) * 256
+                g = 50
+                colour = [r, g, b]
+            return colour
 
     def __random_spawn(self, fraction):
         self.board.reset()
