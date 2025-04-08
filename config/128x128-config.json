@@ -19,7 +19,18 @@
     {
       "type": "bounce",
       "frame_rate": 24,
-      "scale": 1
+      "scale": 1,
+      "presets": {
+        "0": {
+          "ball_count": 100
+        },
+        "1": {
+          "ball_count": 10
+        },
+        "2": {
+          "ball_count": 1
+        }
+      }
     },
     {
       "type": "snake",
