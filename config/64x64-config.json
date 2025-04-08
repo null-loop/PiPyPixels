@@ -37,6 +37,54 @@
             "max_look_ahead": 5,
             "turns_to_starvation": 0
           }
+        },
+        "1": {
+          "snake_count": 2,
+          "food_count": 200,
+          "traits": {
+            "length_to_split": 1000,
+            "snake_weight": -100,
+            "wall_weight": -1.1,
+            "food_weight": 2,
+            "max_look_ahead": 100,
+            "turns_to_starvation": 0
+          }
+        },
+        "2": {
+          "snake_count": 10,
+          "food_count": 50,
+          "traits": {
+            "length_to_split": 100,
+            "snake_weight": -1.1,
+            "wall_weight": -1.1,
+            "food_weight": 2,
+            "max_look_ahead": 5,
+            "turns_to_starvation": 0
+          }
+        },
+        "4": {
+          "snake_count": 100,
+          "food_count": 20,
+          "traits": {
+            "length_to_split": 10,
+            "snake_weight": -1.1,
+            "wall_weight": -1.1,
+            "food_weight": 2,
+            "max_look_ahead": 5,
+            "turns_to_starvation": 100
+          }
+        },
+        "5": {
+          "snake_count": 10,
+          "food_count": 200,
+          "traits": {
+            "length_to_split": 5,
+            "snake_weight": -1.1,
+            "wall_weight": -1.1,
+            "food_weight": 2,
+            "max_look_ahead": 5,
+            "turns_to_starvation": 0
+          }
         }
       }
     },
