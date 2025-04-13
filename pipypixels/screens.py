@@ -124,10 +124,20 @@ class StartupImageScreen(ImageScreen):
             image = assets.logo_32_by_32
         return image
 
+class ArtworkConfiguration:
+    path = "./assets/art"
+
+    @staticmethod
+    def create_from_json(screen_json_config):
+        config = ArtworkConfiguration()
+        config.path = screen_json_config["path"]
+        return config
+
 class ArtworkScreen(ImageScreen):
-    def __init__(self, matrix: Matrix):
+    def __init__(self, config: ArtworkConfiguration, matrix: Matrix):
         super().__init__(10000, matrix)
         self.__current_artwork_index = 0
+        assets.load_artwork(config.path)
 
     def __overflow_artwork_index(self):
         if self.__current_artwork_index >= len(assets.artwork):

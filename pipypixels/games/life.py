@@ -97,6 +97,7 @@ class GameOfLifeEngine(GameEngine):
 class GameOfLifeScreen(GameScreen):
     def __init__(self, config: GameOfLifeConfiguration, matrix: Matrix):
         self.__config = config
+        assets.load_life_presets()
         super().__init__(matrix, self.__get_engine, config, redraw_on_show=False)
 
     def __get_engine(self) ->GameEngine:
