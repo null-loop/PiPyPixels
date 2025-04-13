@@ -18,7 +18,7 @@
     },
     {
       "type": "bounce",
-      "frame_rate": 24,
+      "frame_rate": 48,
       "scale": 1,
       "presets": {
         "0": {

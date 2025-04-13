@@ -311,10 +311,10 @@ class GameScreen(Screen):
             self._config.scale = max(self._config.scale - 1, 1)
             self.__rebuild_engine()
         elif command == Command.FRAME_RATE_UP:
-            self._config.frame_rate = self._frame_rate + 1
+            self._config.frame_rate = self._config.frame_rate + 1
             self._engine.set_frame_rate(self._config.frame_rate)
         elif command == Command.FRAME_RATE_DOWN:
-            self._config.frame_rate = max(self._frame_rate - 1, 1)
+            self._config.frame_rate = max(self._config.frame_rate - 1, 1)
             self._engine.set_frame_rate(self._config.frame_rate)
         elif command == Command.PRESET_0:
             self.__apply_preset(0)
