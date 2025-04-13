@@ -6,6 +6,7 @@ from pipypixels.games.maze import MazeScreen, MazeConfiguration
 from pipypixels.games.snakes import SnakeScreen, SnakeConfiguration
 from pipypixels.graphics.shared import Matrix
 from pipypixels.screens import ScreenController, ArtworkScreen, StartupImageScreen, ArtworkConfiguration
+from pipypixels.spotify import SpotifyConfiguration, SpotifyScreen
 
 
 def load_config():
@@ -34,6 +35,9 @@ def load_screens(json_config, screen_controller: ScreenController, matrix: Matri
         elif screen_type == "game-of-life":
             game_of_life_config = GameOfLifeConfiguration.create_from_json(screen_config)
             screen = GameOfLifeScreen(game_of_life_config, matrix)
+        elif screen_type == "spotify":
+            spotify_config = SpotifyConfiguration.create_from_json(screen_config)
+            screen = SpotifyScreen(spotify_config, matrix)
 
         if screen is not None:
             screen_controller.add_screen(screen)

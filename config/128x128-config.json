@@ -17,6 +17,14 @@
       "path": "./assets/art"
     },
     {
+      "type": "spotify",
+      "client_id": "",
+      "client_secret": "",
+      "denied_artists": [
+        "die form", ":wumpscut:", "genitorturers", "angelspit", "miss fd", "attrition", "polaxe"
+      ]
+    },
+    {
       "type": "bounce",
       "frame_rate": 48,
       "scale": 1,
