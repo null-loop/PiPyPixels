@@ -1,10 +1,7 @@
-import math
 import sys
-import time
-from enum import Enum
-from random import choice, randrange
+from random import choice
 
-from pipypixels.games.shared import GameEntity, GameBoard, GameEngine, GameScreen
+from pipypixels.games.shared import *
 from pipypixels.graphics.shared import Matrix
 
 
@@ -17,6 +14,17 @@ class GameState(Enum):
     NOT_STARTED = 0
     PROGRESSING = 1
     RETURNING = 2
+
+class MazeConfiguration(GameConfiguration):
+    presets = []
+
+    @staticmethod
+    def create_from_json(screen_json_config):
+        config = MazeConfiguration()
+        config.presets = GamePreset.create_many_from_json_config(screen_json_config)
+        config.frame_rate = screen_json_config["frame_rate"]
+        config.scale = screen_json_config["scale"]
+        return config
 
 class MazeGenerator:
     _UP = (0,1)
@@ -70,8 +78,8 @@ class MazeGenerator:
                 self.__visit(next_x, next_y)
 
 class MazeEngine(GameEngine):
-    def __init__(self, scale, matrix: Matrix, frame_rate):
-        super().__init__(scale, matrix, frame_rate)
+    def __init__(self, matrix: Matrix, config: MazeConfiguration):
+        super().__init__(matrix, config)
         self.__maze_entrance = ()
         self.__maze_exit = ()
         self.__trail = []
@@ -79,6 +87,8 @@ class MazeEngine(GameEngine):
         self.__state = GameState.NOT_STARTED
         self.__wait_until = -1
         self.__returning_to = None
+        self.__config = config
+        self.__current_preset = config.presets[0]
 
     def _calculate_game_board_width(self, led_cols, scale):
         w = int(math.floor(led_cols / scale))
@@ -93,16 +103,16 @@ class MazeEngine(GameEngine):
         return h
 
     def _colour_cell_func(self, x, y, entity_type):
-        colour = [0,0,0]
-        if entity_type == GameEntity.WALL:
-            colour = [80,80,80]
-        if entity_type == GameEntity.SOLVER:
-            colour = [0, 255, 0]
-        return colour
+        return self.__current_preset.colours[entity_type]
 
     def reset(self):
         self.__wait_until = -1
         self.__generate_maze()
+
+    def apply_preset(self, preset_index):
+        if preset_index >= len(self.__config.presets):
+            preset_index = 0
+        self.__current_preset = self.__config.presets[preset_index]
 
     def _game_tick(self):
         if self.__wait_until > 0:
@@ -117,10 +127,6 @@ class MazeEngine(GameEngine):
             elif self.__state == GameState.PROGRESSING:
                 current = self.__trail[-1]
                 can_move = self.board.get_immediate_neighbours(current[0], current[1], GameEntity.EMPTY)
-                # if we've returned to a previous junction - remove the turns we've already taken from the possible moves
-                if self.__returning_to is not None:
-                    for already_turned in self.__returning_to.turns:
-                        can_move.remove(already_turned)
                 # 'tis a dead end my lord!
                 if len(can_move) == 0:
                     # if we're already returning to a junction, then pop that junction as it's exhausted
@@ -157,7 +163,7 @@ class MazeEngine(GameEngine):
                     self.__state = GameState.PROGRESSING
                 else:
                     trimmed = self.__trail.pop()
-                    self.board.set_with_colour(trimmed[0], trimmed[1], GameEntity.EMPTY, [0, 60, 0])
+                    self.board.set(trimmed[0], trimmed[1], GameEntity.SOLVER_ABANDONED)
 
             # check when we've solved the maze - and start another one!
             if fin:
@@ -193,8 +199,9 @@ class MazeEngine(GameEngine):
                 self.board.set(self.board.width() - 1, pos_y, GameEntity.EMPTY)
 
 class MazeScreen(GameScreen):
-    def __init__(self, matrix: Matrix):
-        super().__init__(matrix, self.__get_engine, redraw_on_show=False)
+    def __init__(self, config: MazeConfiguration, matrix: Matrix):
+        self.__config = config
+        super().__init__(matrix, self.__get_engine, config, redraw_on_show=False)
 
     def __get_engine(self) ->GameEngine:
-        return MazeEngine(self._scale, self._matrix, self._frame_rate)
+        return MazeEngine(self._matrix, self.__config)

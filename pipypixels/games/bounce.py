@@ -1,20 +1,47 @@
 import math
 from random import randrange
 
-from pipypixels.games.shared import VectorGameEngine, GameScreen, GameEngine, GameEntity
+from pipypixels.games.shared import GameScreen, GameEngine, GameEntity, GameConfiguration, GamePreset
 from pipypixels.graphics.shared import Matrix
 
+class BounceConfiguration(GameConfiguration):
+    presets = []
 
-class BounceEngine(VectorGameEngine):
-    def __init__(self, scale, matrix: Matrix, frame_rate):
-        super().__init__(scale, matrix, frame_rate)
+    @staticmethod
+    def create_from_json(screen_json_config):
+        config = BounceConfiguration()
+        config.presets = BouncePreset.create_many_from_json_config(screen_json_config)
+        config.frame_rate = screen_json_config["frame_rate"]
+        config.scale = screen_json_config["scale"]
+        return config
+
+class BouncePreset(GamePreset):
+    ball_count = 10
+
+    @staticmethod
+    def create_many_from_json_config(screen_json_config):
+        presets = []
+        for preset_index in screen_json_config["presets"]:
+            preset_json_config = screen_json_config["presets"][preset_index]
+            preset = GamePreset.create_from_json_config(preset_json_config)
+            if "ball_count" in preset_json_config:
+                preset.ball_count = preset_json_config["ball_count"]
+            presets.append(preset)
+        return presets
+
+class BounceEngine(GameEngine):
+    def __init__(self, matrix: Matrix, config: BounceConfiguration):
+        super().__init__(matrix, config)
+        self.__config = config
         self.__balls = []
+        self.__ball_count = 0
+        self.apply_preset(0)
 
     def reset(self):
         self.board.reset()
         self.__balls.clear()
         self.__draw_walls()
-        self.__spawn_balls(100)
+        self.__spawn_balls(self.__ball_count)
 
     def __spawn_balls(self, count:int):
         for _ in range(count):
@@ -103,15 +130,19 @@ class BounceEngine(VectorGameEngine):
     def reset_on_play(self):
         return False
 
+    def apply_preset(self, preset_index):
+        if preset_index >= len(self.__config.presets):
+            preset_index = 0
+        preset = self.__config.presets[preset_index]
+        self.__ball_count = preset.ball_count
+
 class BounceScreen(GameScreen):
-    def __init__(self, matrix: Matrix):
-        super().__init__(matrix, self.__get_engine, redraw_on_show=True)
+    def __init__(self, config: BounceConfiguration, matrix: Matrix):
+        self.__config = config
+        super().__init__(matrix, self.__get_engine, config, redraw_on_show=True)
 
     def __get_engine(self) ->GameEngine:
-        return BounceEngine(self._scale, self._matrix, self._frame_rate)
-
-    def initial_frame_rate(self):
-        return 48
+        return BounceEngine(self._matrix, self.__config)
 
     def redraw(self):
         self._engine.board.matrix.start_new_canvas()

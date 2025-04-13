@@ -6,7 +6,7 @@ from typing import List
 from PIL import ImageColor
 
 from pipypixels.controls.shared import Command
-from pipypixels.games.shared import GameEntity, GameBoard, GameEngine, GameScreen
+from pipypixels.games.shared import GameEntity, GameBoard, GameEngine, GameScreen, GameConfiguration, GamePreset
 from pipypixels.graphics.shared import Matrix
 
 
@@ -42,6 +42,54 @@ class SnakeTraits:
         if trait == 0: self.food_weight = self.food_weight + trait_change
         if trait == 1: self.wall_weight = self.wall_weight + trait_change
         if trait == 2: self.snake_weight = self.snake_weight + trait_change
+
+    @staticmethod
+    def create_from_json_config(trait_json_config):
+        traits = SnakeTraits()
+        if "length_to_split" in trait_json_config:
+            traits.length_to_split = trait_json_config["length_to_split"]
+        if "snake_weight" in trait_json_config:
+            traits.snake_weight = float(trait_json_config["snake_weight"])
+        if "food_weight" in trait_json_config:
+            traits.food_weight = float(trait_json_config["food_weight"])
+        if "wall_weight" in trait_json_config:
+            traits.wall_weight = float(trait_json_config["wall_weight"])
+        if "max_look_ahead" in trait_json_config:
+            traits.max_look_ahead = trait_json_config["max_look_ahead"]
+        if "turns_to_starvation" in trait_json_config:
+            traits.turns_to_starvation = trait_json_config["turns_to_starvation"]
+        return traits
+
+class SnakeConfiguration(GameConfiguration):
+    presets = []
+
+    @staticmethod
+    def create_from_json(screen_json_config):
+        config = SnakeConfiguration()
+        config.presets = SnakePreset.create_many_from_json_config(screen_json_config)
+        config.frame_rate = screen_json_config["frame_rate"]
+        config.scale = screen_json_config["scale"]
+        return config
+
+class SnakePreset(GamePreset):
+    snake_count = 20
+    food_count = 100
+    traits = SnakeTraits()
+
+    @staticmethod
+    def create_many_from_json_config(screen_json_config):
+        presets = []
+        for preset_index in screen_json_config["presets"]:
+            preset_json_config = screen_json_config["presets"][preset_index]
+            preset = GamePreset.create_from_json_config(preset_json_config)
+            if "snake_count" in preset_json_config:
+                preset.snake_count = preset_json_config["snake_count"]
+            if "food_count" in preset_json_config:
+                preset.food_count = preset_json_config["food_count"]
+            if "traits" in preset_json_config:
+                preset.traits = SnakeTraits.create_from_json_config(preset_json_config["traits"])
+            presets.append(preset)
+        return presets
 
 class Snake:
 
@@ -247,12 +295,14 @@ class Snake:
         position[1] = self.__overflow_y(position[1])
 
 class SnakeEngine(GameEngine):
-    def __init__(self, scale, matrix: Matrix, frame_rate):
-        super().__init__(scale, matrix, frame_rate)
+    def __init__(self, matrix: Matrix, config: SnakeConfiguration):
+        super().__init__(matrix, config)
         self.__snakes = []
         self.__food_count = 100
         self.__snake_count = 20
         self.__starting_traits = SnakeTraits()
+        self.__config = config
+        self.apply_preset(0)
 
     def starting_spawn(self):
         self.__spawn_foods(self.__food_count)
@@ -307,36 +357,22 @@ class SnakeEngine(GameEngine):
     def reset_on_play(self):
         return False
 
-    def _handle_command(self, command:Command):
-        if command == Command.PRESET_1:
-            # Very long, risk-averse
-            self.__snake_count = 2
-            self.__food_count = 200
-            self.__starting_traits = SnakeTraits()
-            self.__starting_traits.length_to_split = 1000
-            self.__starting_traits.snake_weight = -100
-            self.__starting_traits.max_look_ahead = 20
-            self.reset()
-        elif command == Command.PRESET_2:
-            self.__snake_count = 10
-            self.__food_count = 50
-            self.__starting_traits = SnakeTraits()
-            self.__starting_traits.length_to_split = 100
-            self.reset()
-        elif command == Command.PRESET_3:
-            self.__snake_count = 100
-            self.__food_count = 20
-            self.__starting_traits = SnakeTraits()
-            self.__starting_traits.length_to_split = 10
-            self.__starting_traits.turns_to_starvation = 100
-            self.reset()
+    def apply_preset(self, preset_index):
+        if preset_index >= len(self.__config.presets):
+            preset_index = 0
+        preset = self.__config.presets[preset_index]
+
+        self.__food_count = preset.food_count
+        self.__snake_count = preset.snake_count
+        self.__starting_traits = preset.traits
 
 class SnakeScreen(GameScreen):
-    def __init__(self, matrix: Matrix):
-        super().__init__(matrix, self.__get_engine, redraw_on_show=True)
+    def __init__(self, config: SnakeConfiguration, matrix: Matrix):
+        self.__config = config
+        super().__init__(matrix, self.__get_engine, config,redraw_on_show=True)
 
     def __get_engine(self) -> GameEngine:
-        return SnakeEngine(self._scale, self._matrix, self._frame_rate)
+        return SnakeEngine(self._matrix, self.__config)
 
     def redraw(self):
         self._engine.board.matrix.start_new_canvas()

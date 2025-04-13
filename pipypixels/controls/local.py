@@ -83,7 +83,7 @@ class UICommandSource:
         self.__screen_controller.receive_command(Command.PRESET_9)
 
     def __preset_10(self, sender, app_data):
-        self.__screen_controller.receive_command(Command.PRESET_10)
+        self.__screen_controller.receive_command(Command.PRESET_0)
 
     def create_buttons(self):
         dpg.add_file_dialog(tag='file_dialog', show=False, callback=self.__screenshot_save, width=600, height=400)

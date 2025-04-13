@@ -25,7 +25,7 @@ class RemoteKeyboardCommandSource:
         elif scan_code == 8: command = Command.PRESET_7
         elif scan_code == 9: command = Command.PRESET_8
         elif scan_code == 10: command = Command.PRESET_9
-        elif scan_code == 11: command = Command.PRESET_10
+        elif scan_code == 11: command = Command.PRESET_0
         elif scan_code == 113: command = Command.RESET
         elif scan_code == 115: command = Command.BRIGHTNESS_UP
         elif scan_code == 114: command = Command.BRIGHTNESS_DOWN

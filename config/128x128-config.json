@@ -5,10 +5,140 @@
     "panel_led_width": 64,
     "panel_led_height": 64,
     "hardware_mapping": "adafruit-hat-pwm",
-    "gpio_slowdown": 5,
+    "gpio_slowdown": 1,
     "limit_refresh_rate_hz": 0,
     "brightness": 100,
     "disable_hardware_pulsing": false,
     "drop_privileges": false
-  }
+  },
+  "screens": [
+    {
+      "type": "artwork",
+      "path": "./assets/art"
+    },
+    {
+      "type": "bounce",
+      "frame_rate": 24,
+      "scale": 1,
+      "presets": {
+        "0": {
+          "ball_count": 100
+        },
+        "1": {
+          "ball_count": 10
+        },
+        "2": {
+          "ball_count": 1
+        }
+      }
+    },
+    {
+      "type": "snake",
+      "frame_rate": 24,
+      "scale": 1,
+      "presets": {
+        "0": {
+          "snake_count": 20,
+          "food_count": 100,
+          "traits": {
+            "length_to_split": 30,
+            "snake_weight": -1.1,
+            "wall_weight": -1.1,
+            "food_weight": 2,
+            "max_look_ahead": 5,
+            "turns_to_starvation": 0
+          }
+        },
+        "1": {
+          "snake_count": 2,
+          "food_count": 200,
+          "traits": {
+            "length_to_split": 1000,
+            "snake_weight": -100,
+            "wall_weight": -1.1,
+            "food_weight": 2,
+            "max_look_ahead": 100,
+            "turns_to_starvation": 0
+          }
+        },
+        "2": {
+          "snake_count": 10,
+          "food_count": 50,
+          "traits": {
+            "length_to_split": 100,
+            "snake_weight": -1.1,
+            "wall_weight": -1.1,
+            "food_weight": 2,
+            "max_look_ahead": 5,
+            "turns_to_starvation": 0
+          }
+        },
+        "4": {
+          "snake_count": 100,
+          "food_count": 20,
+          "traits": {
+            "length_to_split": 10,
+            "snake_weight": -1.1,
+            "wall_weight": -1.1,
+            "food_weight": 2,
+            "max_look_ahead": 5,
+            "turns_to_starvation": 100
+          }
+        },
+        "5": {
+          "snake_count": 10,
+          "food_count": 200,
+          "traits": {
+            "length_to_split": 5,
+            "snake_weight": -1.1,
+            "wall_weight": -1.1,
+            "food_weight": 2,
+            "max_look_ahead": 5,
+            "turns_to_starvation": 0
+          }
+        }
+      }
+    },
+    {
+      "type": "maze",
+      "frame_rate": 48,
+      "scale": 1,
+      "presets": {
+        "0": {
+          "colours": {
+            "EMPTY": [0,0,0],
+            "WALL": [180,180,180],
+            "SOLVER": [0,255,0],
+            "SOLVER_ABANDONED": [0,60,0]
+          }
+        },
+        "1": {
+          "colours": {
+            "EMPTY": [0,0,0],
+            "WALL": [180,180,180],
+            "SOLVER": [180,0,255],
+            "SOLVER_ABANDONED": [90,0,128]
+          }
+        }
+      }
+    },
+    {
+      "type": "game-of-life",
+      "frame_rate": 24,
+      "scale": 1,
+      "presets": {
+        "0": {
+          "pattern": "random",
+          "colours": {
+            "EMPTY": [0,0,0],
+            "CELL": [200,0,0]
+          }
+        },
+        "1": {
+          "pattern": "mask",
+          "mask": "gosper-glider-gun.png"
+        }
+      }
+    }
+  ]
 }

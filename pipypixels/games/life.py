@@ -4,25 +4,40 @@ from PIL import Image
 from numpy import asarray
 
 from pipypixels.controls.shared import Command
-from pipypixels.games.shared import GameEntity, GameEngine, GameScreen
+from pipypixels.games.shared import GameEntity, GameEngine, GameScreen, GameConfiguration, GamePreset
 from pipypixels.graphics import assets
 from pipypixels.graphics.shared import Matrix
 
+class GameOfLifeConfiguration(GameConfiguration):
+    presets = []
+
+    @staticmethod
+    def create_from_json(screen_json_config):
+        config = GameOfLifeConfiguration()
+        config.presets = GamePreset.create_many_from_json_config(screen_json_config)
+        config.frame_rate = screen_json_config["frame_rate"]
+        config.scale = screen_json_config["scale"]
+        return config
 
 class GameOfLifeEngine(GameEngine):
 
-    def __init__(self, scale, matrix: Matrix, frame_rate):
+    def __init__(self, matrix: Matrix, config: GameOfLifeConfiguration):
         self.__preset_index = 0
-        super().__init__(scale, matrix, frame_rate)
+        super().__init__(matrix, config)
+        self.__config = config
+        self.__current_preset = config.presets[0]
 
     def _colour_cell_func(self, x, y, entity_type:GameEntity):
-        colour = (0,0,0)
-        if entity_type == GameEntity.CELL:
-            r = (x / self.board.width()) * 256
-            b = (y / self.board.height()) * 256
-            g = 50
-            colour = [r, g, b]
-        return colour
+        if len(self.__current_preset.colours) > 0:
+            return self.__current_preset.colours[entity_type]
+        else:
+            colour = (0,0,0)
+            if entity_type == GameEntity.CELL:
+                r = (x / self.board.width()) * 256
+                b = (y / self.board.height()) * 256
+                g = 50
+                colour = [r, g, b]
+            return colour
 
     def __random_spawn(self, fraction):
         self.board.reset()
@@ -59,10 +74,10 @@ class GameOfLifeEngine(GameEngine):
             self.board.set(d[0], d[1], GameEntity.EMPTY)
 
     def reset(self):
-        if self.__preset_index == 0:
+        if self.__current_preset.pattern == "random":
             self.__random_spawn(5)
-        elif self.__preset_index == 1:
-            self.__load_from_image(assets.life_presets['gosper-glider-gun.png'])
+        elif self.__current_preset.pattern == "mask":
+            self.__load_from_image(assets.life_presets[self.__current_preset.mask])
 
     def __load_from_image(self, image:Image):
         data = asarray(image)
@@ -74,17 +89,16 @@ class GameOfLifeEngine(GameEngine):
                 if p[0] < 100: positions.append((x, y))
         self.__spawn_many(positions)
 
-    def _handle_command(self, command:Command):
-        if command == Command.PRESET_1:
-            self.__preset_index = 1
-            self.reset()
-        elif command == Command.PRESET_10:
-            self.__preset_index = 0
-            self.reset()
+    def apply_preset(self, preset_index):
+        if preset_index >= len(self.__config.presets):
+            preset_index = 0
+        self.__current_preset = self.__config.presets[preset_index]
 
 class GameOfLifeScreen(GameScreen):
-    def __init__(self, matrix: Matrix):
-        super().__init__(matrix, self.__get_engine, redraw_on_show=False)
+    def __init__(self, config: GameOfLifeConfiguration, matrix: Matrix):
+        self.__config = config
+        assets.load_life_presets()
+        super().__init__(matrix, self.__get_engine, config, redraw_on_show=False)
 
     def __get_engine(self) ->GameEngine:
-        return GameOfLifeEngine(self._scale, self._matrix, self._frame_rate)
+        return GameOfLifeEngine(self._matrix, self.__config)

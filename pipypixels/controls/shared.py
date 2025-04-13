@@ -1,7 +1,7 @@
-from enum import IntEnum
+from enum import Enum
 
 
-class Command(IntEnum):
+class Command(Enum):
     NONE = -1
     RESET = 0
     POWER = 1
@@ -27,7 +27,7 @@ class Command(IntEnum):
     PRESET_7 = 106
     PRESET_8 = 107
     PRESET_9 = 108
-    PRESET_10 = 109
+    PRESET_0 = 109
     NEXT_AND_REMOVE = 200
     PREV_AND_REMOVE = 201
     EXIT = 999
