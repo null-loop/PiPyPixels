@@ -40,7 +40,7 @@ class Screen:
 
 
 class ImageScreen(Screen):
-    def __init__(self, refresh_interval_seconds, matrix: Matrix):
+    def __init__(self, refresh_interval_seconds: int, matrix: Matrix):
         self.__thread = None
         self._matrix = matrix
         self.__command_queue = queue.Queue()

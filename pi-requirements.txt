@@ -1,3 +1,5 @@
 pillow~=11.0.0
 numpy~=2.0.2
 keyboard~=0.13.5
+spotipy~=2.24.0
+mahotas~=1.4.18

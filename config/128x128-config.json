@@ -5,7 +5,7 @@
     "panel_led_width": 64,
     "panel_led_height": 64,
     "hardware_mapping": "adafruit-hat-pwm",
-    "gpio_slowdown": 1,
+    "gpio_slowdown": 5,
     "limit_refresh_rate_hz": 0,
     "brightness": 100,
     "disable_hardware_pulsing": false,
@@ -15,6 +15,14 @@
     {
       "type": "artwork",
       "path": "./assets/art"
+    },
+    {
+      "type": "spotify",
+      "client_id": "",
+      "client_secret": "",
+      "denied_artists": [
+        "die form", ":wumpscut:", "genitorturers", "angelspit", "miss fd", "attrition", "polaxe"
+      ]
     },
     {
       "type": "bounce",
