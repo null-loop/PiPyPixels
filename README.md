@@ -29,10 +29,10 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [x] Show StartupScreen on Power On
 * [x] Screen capture in local
 * [ ] Diagnostic screen - First thing - IP Address + ImageBuilder?
-* [ ] Options types
-* [ ] Reading config from JSON
+* [x] Options types
+* [x] Reading config from JSON
 * [ ] Secret management approach
-* [ ] Spotify - Need a Spotify client
+* [x] Spotify - Need a Spotify client
 * [ ] GitStatus - Need a Git client
 * [ ] Options 'screens' or Webserver?
 * [ ] setup.py
