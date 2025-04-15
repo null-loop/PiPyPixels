@@ -4,6 +4,7 @@ from pipypixels.games.bounce import BounceScreen, BounceConfiguration
 from pipypixels.games.life import GameOfLifeScreen, GameOfLifeConfiguration
 from pipypixels.games.maze import MazeScreen, MazeConfiguration
 from pipypixels.games.snakes import SnakeScreen, SnakeConfiguration
+from pipypixels.gitstatus import GitStatusConfiguration, GitStatusScreen
 from pipypixels.graphics.shared import Matrix
 from pipypixels.screens import ScreenController, ArtworkScreen, StartupImageScreen, ArtworkConfiguration
 from pipypixels.spotify import SpotifyConfiguration, SpotifyScreen
@@ -38,6 +39,9 @@ def load_screens(json_config, screen_controller: ScreenController, matrix: Matri
         elif screen_type == "spotify":
             spotify_config = SpotifyConfiguration.create_from_json(screen_config)
             screen = SpotifyScreen(spotify_config, matrix)
+        elif screen_type == "git-status":
+            gitstatus_config = GitStatusConfiguration.create_from_json(screen_config)
+            screen = GitStatusScreen(gitstatus_config, matrix)
 
         if screen is not None:
             screen_controller.add_screen(screen)

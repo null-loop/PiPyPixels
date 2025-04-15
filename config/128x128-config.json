@@ -25,6 +25,37 @@
       ]
     },
     {
+      "type": "git-status",
+      "pat": "",
+      "repos": [
+        {
+          "name": "pico",
+          "display": "Core",
+          "checks": ["Core API - Deploy to Production and Reference","Core Services - Analyse"]
+        },
+        {
+          "name": "pico.supergraph",
+          "display": "Graph",
+          "checks": ["Deploy Main"]
+        },
+        {
+          "name": "pico.event.sdk",
+          "display": "SDK",
+          "checks": ["Publish NuGet Package", "Publish Avro Schema to Eventhub Schema Registry"]
+        },
+        {
+          "name": "pico.frontend",
+          "display": "Web",
+          "checks": ["Build and deploy to Cloudflare Pages"]
+        },
+        {
+          "name": "pico.payloadcms",
+          "display": "CMS",
+          "checks": []
+        }
+      ]
+    },
+    {
       "type": "bounce",
       "frame_rate": 48,
       "scale": 1,
