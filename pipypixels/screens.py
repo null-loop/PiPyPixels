@@ -48,6 +48,7 @@ class ImageScreen(Screen):
         self.__last_refresh = 0.0
         self.__paused = False
         self.__current_image = None
+        self.__render_thread = None
 
     def show(self):
         if self.__thread is None:
@@ -100,9 +101,16 @@ class ImageScreen(Screen):
             time_now = time.time()
             if time_now > self.__last_refresh + self.__refresh_interval_seconds and not self.__paused:
                 self.__last_refresh = time_now
-                self.__current_image = self._render_image()
-                self.__render_current_image()
+                if self.__render_thread is None or not self.__render_thread.is_alive():
+                    print(f'Starting render thread...')
+                    self.__render_thread = threading.Thread(target=self.__do_threaded_render)
+                    self.__render_thread.start()
             time.sleep(1/10)
+            if not self.__paused:
+                self.__render_current_image()
+
+    def __do_threaded_render(self):
+        self.__current_image = self._render_image()
 
     def redraw(self):
         self.__render_current_image()
@@ -114,6 +122,7 @@ class StartupImageScreen(ImageScreen):
 
     def _render_image(self) ->Image:
         if time.time() > self.__time_to_move_on:
+            print('Time to move on...')
             self._send_command_to_observer(Command.NEXT_AND_REMOVE)
         image = None
         if self._matrix.config.overall_led_height == 128:
