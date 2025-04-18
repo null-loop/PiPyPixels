@@ -40,14 +40,15 @@ class Screen:
 
 
 class ImageScreen(Screen):
-    def __init__(self, refresh_interval_seconds: int, matrix: Matrix):
+    def __init__(self, refresh_interval_seconds: int, current_image: Image, matrix: Matrix):
         self.__thread = None
         self._matrix = matrix
         self.__command_queue = queue.Queue()
         self.__refresh_interval_seconds = refresh_interval_seconds
         self.__last_refresh = 0.0
         self.__paused = False
-        self.__current_image = None
+        self.__current_image = current_image
+        self.__render_thread = None
 
     def show(self):
         if self.__thread is None:
@@ -100,29 +101,37 @@ class ImageScreen(Screen):
             time_now = time.time()
             if time_now > self.__last_refresh + self.__refresh_interval_seconds and not self.__paused:
                 self.__last_refresh = time_now
-                self.__current_image = self._render_image()
-                self.__render_current_image()
+                if self.__render_thread is None or not self.__render_thread.is_alive():
+                    print(f'Starting render thread...')
+                    self.__render_thread = threading.Thread(target=self.__do_threaded_render)
+                    self.__render_thread.start()
             time.sleep(1/10)
+            if not self.__paused:
+                self.__render_current_image()
+
+    def __do_threaded_render(self):
+        image = self._render_image()
+        if image is not None:
+            smallest_dimension = self._matrix.config.overall_led_width
+            if self._matrix.config.overall_led_height < smallest_dimension:
+                smallest_dimension = self._matrix.config.overall_led_height
+            if smallest_dimension < image.width:
+                image.thumbnail((smallest_dimension, smallest_dimension))
+        self.__current_image = image
 
     def redraw(self):
         self.__render_current_image()
 
 class StartupImageScreen(ImageScreen):
     def __init__(self, matrix: Matrix):
-        super().__init__(1, matrix)
+        super().__init__(1, assets.logo, matrix)
         self.__time_to_move_on = time.time() + 2
 
     def _render_image(self) ->Image:
         if time.time() > self.__time_to_move_on:
+            print('Time to move on...')
             self._send_command_to_observer(Command.NEXT_AND_REMOVE)
-        image = None
-        if self._matrix.config.overall_led_height == 128:
-            image = assets.logo_128_by_128
-        elif self._matrix.config.overall_led_height == 64:
-            image = assets.logo_64_by_64
-        elif self._matrix.config.overall_led_height == 32:
-            image = assets.logo_32_by_32
-        return image
+        return assets.logo
 
 class ArtworkConfiguration:
     path = "./assets/art"
@@ -135,7 +144,7 @@ class ArtworkConfiguration:
 
 class ArtworkScreen(ImageScreen):
     def __init__(self, config: ArtworkConfiguration, matrix: Matrix):
-        super().__init__(10000, matrix)
+        super().__init__(10000, None, matrix)
         self.__current_artwork_index = 0
         assets.load_artwork(config.path)
 
@@ -146,15 +155,7 @@ class ArtworkScreen(ImageScreen):
             self.__current_artwork_index = len(assets.artwork) - 1
 
     def _render_image(self) ->Image:
-        image = assets.artwork[self.__current_artwork_index]
-        smallest_dimension = self._matrix.config.overall_led_width
-        if self._matrix.config.overall_led_height < smallest_dimension:
-            smallest_dimension = self._matrix.config.overall_led_height
-
-        if smallest_dimension < image.width:
-            image.thumbnail((smallest_dimension, smallest_dimension))
-
-        return image
+        return assets.artwork[self.__current_artwork_index]
 
     def step_back(self):
         self.__current_artwork_index = self.__current_artwork_index - 1

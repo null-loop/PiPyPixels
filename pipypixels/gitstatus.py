@@ -43,7 +43,7 @@ class GitStatus:
 
 class GitStatusScreen(ImageScreen):
     def __init__(self, config: GitStatusConfiguration, matrix: Matrix):
-        super().__init__(60, matrix)
+        super().__init__(60, assets.github_loading, matrix)
         self.__config = config
         self.__small_font = assets.font_custom(12)
         self.__big_font = assets.font_custom(23)
