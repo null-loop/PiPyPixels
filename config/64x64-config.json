@@ -94,15 +94,15 @@
           }
         },
         "5": {
-          "snake_count": 10,
+          "snake_count": 50,
           "food_count": 200,
           "traits": {
-            "length_to_split": 5,
+            "length_to_split": 6,
             "snake_weight": -1.1,
             "wall_weight": -1.1,
             "food_weight": 2,
             "max_look_ahead": 5,
-            "turns_to_starvation": 0
+            "turns_to_starvation": 10
           }
         }
       }

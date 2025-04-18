@@ -194,7 +194,6 @@ class Snake:
                     # we need to remove our tail...
                     self.__move_tail()
                     self.__turns_since_last_ate = 0
-                    return SnakeTurnResult.MOVED
                 # we're not growing, so move the head and the tail
                 self.__move_head(new_head_position)
                 self.__move_tail()
