@@ -28,7 +28,7 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [x] ArtworkScreen
 * [x] Show StartupScreen on Power On
 * [x] Screen capture in local
-* [ ] Diagnostic screen - First thing - IP Address + ImageBuilder?
+* [ ] Diagnostic screen - First thing - IP Address + ImageBuilder? Also the Wifi SSID / status
 * [x] Options types
 * [x] Reading config from JSON
 * [ ] Secret management approach
