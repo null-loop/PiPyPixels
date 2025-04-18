@@ -47,7 +47,7 @@ class ImageScreen(Screen):
         self.__refresh_interval_seconds = refresh_interval_seconds
         self.__last_refresh = 0.0
         self.__paused = False
-        self.__current_image = current_image
+        self.__current_image = self.__scale_image_to_matrix(current_image)
         self.__render_thread = None
 
     def show(self):
@@ -102,7 +102,6 @@ class ImageScreen(Screen):
             if time_now > self.__last_refresh + self.__refresh_interval_seconds and not self.__paused:
                 self.__last_refresh = time_now
                 if self.__render_thread is None or not self.__render_thread.is_alive():
-                    print(f'Starting render thread...')
                     self.__render_thread = threading.Thread(target=self.__do_threaded_render)
                     self.__render_thread.start()
             time.sleep(1/10)
@@ -110,14 +109,18 @@ class ImageScreen(Screen):
                 self.__render_current_image()
 
     def __do_threaded_render(self):
-        image = self._render_image()
+        image = self.__scale_image_to_matrix(self._render_image())
+        if image is not None:
+            self.__current_image = image
+
+    def __scale_image_to_matrix(self, image:Image)->Image:
         if image is not None:
             smallest_dimension = self._matrix.config.overall_led_width
             if self._matrix.config.overall_led_height < smallest_dimension:
                 smallest_dimension = self._matrix.config.overall_led_height
             if smallest_dimension < image.width:
                 image.thumbnail((smallest_dimension, smallest_dimension))
-        self.__current_image = image
+        return image
 
     def redraw(self):
         self.__render_current_image()
