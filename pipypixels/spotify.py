@@ -4,6 +4,7 @@ import urllib
 import mahotas
 from PIL import Image
 
+from pipypixels.graphics import assets
 from pipypixels.graphics.shared import Matrix
 from pipypixels.screens import ImageScreen
 import spotipy
@@ -24,7 +25,7 @@ class SpotifyConfiguration:
 
 class SpotifyScreen(ImageScreen):
     def __init__(self, config: SpotifyConfiguration, matrix: Matrix):
-        super().__init__(5, matrix)
+        super().__init__(5, assets.spotify_loading, matrix)
         self.__config = config
         self.__local_image_cache_dir = '.local-image-cache'
 
