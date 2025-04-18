@@ -70,7 +70,7 @@ class SpotifyScreen(ImageScreen):
                     image.save(cached_image_path)
                 else:
                     image = Image.open(cached_image_path)
-
                 return image
+            return None
         except:
             print("Error updating image")
