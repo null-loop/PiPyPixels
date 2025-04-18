@@ -33,7 +33,7 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 * [x] Reading config from JSON
 * [ ] Secret management approach
 * [x] Spotify - Need a Spotify client
-* [ ] GitStatus - Need a Git client
+* [x] GitStatus - Need a Git client (ghapi)
 * [ ] Options 'screens' or Webserver?
 * [ ] setup.py
 
@@ -41,11 +41,11 @@ Reimplement from [12-pinch](https://github.com/null-loop/12-pinch) - but better!
 
 * [x] Pillow
 * [x] DearPyGui
-* [ ] PyGithub
-* [ ] mahotas
+* [x] ghapi 
+* [x] mahotas
 * [x] numpy
 * [x] keyboard
-* [ ] Spotipy
+* [x] Spotipy
 
 ## Future - making it useful for others...
 
